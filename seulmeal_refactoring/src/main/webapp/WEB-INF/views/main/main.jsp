@@ -61,12 +61,12 @@
 	.card-cover {
 		min-width: 400px;
 		min-height:400px;
-	  background-repeat: no-repeat;
-	  background-position: center center;
-	  background-size: cover;
-	  cursor: pointer;
-	  background-color: #0005;
-	  background-blend-mode: normal;
+	    background-repeat: no-repeat;
+	    background-position: center center;
+	    background-size: cover;
+	    cursor: pointer;
+	    background-color: #0005;
+	    background-blend-mode: normal;
 	}
 	.card-cover:hover{		
 		opacity: 0.7;
@@ -449,13 +449,7 @@ $jq(document).ready(function() {
 			                     $(".align-items-stretch").append(productCard)
 			                     filter()
 	                     }
-					
-	                     
-	                     
-
-	                     
-	                     
-	                     
+                    
 	                  }//success
 	                  , error: function(status, jqXHR){
 	                     console.log("error status: "+ status);

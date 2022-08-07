@@ -170,19 +170,20 @@
 		$(".cc").append(`<input type="hidden" name ="minusNameA" value="\${minusName}">`);
 		$(".cc").append(`<input type="hidden" name ="price" value="\${customprice}">`);
 		$(".cc").append(`<input type="hidden" name ="cartStatus" value="\${cartStatus}">`);
-		$(".cc").attr("method" , "POST").attr("action" , "/purchase/insertCustomProduct").submit();
+		$(".cc").attr("method" , "POST").attr("action" , "/api/v1/purchase/custom").submit();
 
 	 }
 	
 	//상품구성재료 제외안되어있으면 제외하기
 	function fncExecpt(partsNo, partsName, ths){
+		
 		minusNo.push(partsNo);
-
         minusName.push(partsName);
         
         toastr.error(" 제외되었습니다.",`\${partsName}`,{timeOut:2000});
         ths.text("제외취소하기");
 	}
+	
 	//상품구성재료 제외하기버튼 클릭
 	$(function() {
 	    $('.execpt').on('click', function() {
@@ -201,14 +202,10 @@
 	    			minusNo.splice(i,1);
 	    			minusName.splice(i,1);
 	    			$(this).text("제외하기");
-	    			console.log("ddminusNo"+minusNo);
-	    			console.log("ddminusName"+minusName);
 	    			return;
 	    		}
 	    	}
 	    	fncExecpt(partsNo, partsName, $(this));
-	    	console.log("ggminusNo"+minusNo);
-	    	console.log("ggminusName"+minusName);
 	    	return;
 	    })
 	});
@@ -224,8 +221,8 @@
 	
 	//추가재료 g변경
 	function fnCalGram(type, ths){
-		var stat = $(ths).closest("div").find("span[name='gram']").text();
-		var num = parseInt(stat,10);		
+		let stat = $(ths).closest("div").find("span[name='gram']").text();
+		let num = parseInt(stat,10);		
 		let calprice = parseInt($(ths).closest("div").find("span[name='partsprice']").text().replace(",",""));
 
 		if(type=='minus'){
@@ -249,7 +246,6 @@
 		const pgram = parseInt($(ths).closest("div").find("span[name='gram']").text(num));
 		const ppgram = $(ths).closest("div").find("input[name='plusGram']").val(num);
 		const pprice = $(ths).closest("div").find("span[name='partsprice']").val();
-		console.log($(ths).closest("div").find("input[name='plusGram']").val())
 
 	}
 	
@@ -268,7 +264,6 @@
 			        },
 			        dataType : "json",
 			        success : function(data,status){
-			        	//console.log(data);
 			        	const parts = "<div class='searchparts'> <input type='hidden' class='partsNo' name='plusPartsNo' value='"+data.partsNo+"' /> <input type='hidden' class='partsName' name='plusName' value='"+data.name+"' />"
 			        	+"<input type='hidden' class='price' name='plusPrice' value='"+data.price+"' />"
 			            +"<br/><div class='parts' data-parts='"+data.partsNo+"'>"+"<span class='name'>" +data.name + "</span><button type='button' class='btn btn-primary' onClick='fncClose(this)'>x</button>"
@@ -290,7 +285,7 @@
 			        },
 			        error : function(status){
 			        	if(status.statusText === "parsererror"){
-			        		toastr.error("없는 재료 입니다..","",{timeOut:2000});
+			        		toastr.error("없는 재료 입니다","",{timeOut:2000});
 			        	}
 			        }
 				})
@@ -306,22 +301,21 @@
 		 $(".search").autocomplete({ 
 			 source : function(request, response) { //source: 입력시 보일 목록
 			     $.ajax({
-			           url : "/purchase/api/autocomplete"   
-			         , type : "POST"
-			         , dataType: "JSON"
-			         , data : {value: request.term}	// 검색 키워드
-			         , success : function(data){ 	// 성공
+			           url : "/api/v1/purchase/autocomplete", 
+			           type : "POST",
+			           dataType: "JSON",
+			           data : {value: request.term},	// 검색 키워드
+			           success : function(data){ 
 			        	 response(
 			                 $.map(data.resultList, function(item) {
 			                     return {
 			                    	     label : item.NAME,    	// 목록에 표시되는 값
 			                             value : item.NAME 		// 선택 시 input창에 표시되는 값
 			                     };
-			                     console.log(data);
 			                 })
 			             );    //response
 			         }
-			         ,error : function(){ //실패
+			         ,error : function(){ 
 			        	 toastr.error("재료없음","",{timeOut:2000});
 			         }
 			     });
@@ -333,7 +327,6 @@
 				delay: 100	//autocomplete 딜레이 시간(ms),
 				, select : function(evt, ui) { 
 		      	// 아이템 선택시 실행 ui.item 이 선택된 항목을 나타내는 객체, lavel/value/idx를 가짐
-					console.log(ui.item.label);
 			 }
 		 });
 		 
@@ -369,8 +362,8 @@
 	
 	//커스터마이징 한 상품 수량변경
 	function fnCalCount(type, ths){
-		var statcount = $(ths).parents("div").find("span[name='count']").text();
-		var number = parseInt(statcount,10);
+		let statcount = $(ths).parents("div").find("span[name='count']").text();
+		let number = parseInt(statcount,10);
 		let calprice = parseInt($("#total").text());
 
 		if(type=='minus'){

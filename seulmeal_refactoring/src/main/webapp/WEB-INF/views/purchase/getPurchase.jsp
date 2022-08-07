@@ -178,7 +178,7 @@
 
 		</div>
 		<div class="container" style="display: flex; justify-content: center;">
-			<button type="button" class="bt" onClick="window.location.href='/purchase/getListPurchase'">확인</button>
+			<button type="button" class="bt" onClick="window.location.href='/api/v1/purchase/'">확인</button>
 		</div>
 		</div>
 	</div>

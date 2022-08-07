@@ -111,8 +111,8 @@
 					<div class="dropdown-menu dropdown-menu-right text-small shadow" aria-labelledby="dropdownMenuLink">
 						<a class="dropdown-item" href="/user/getUpdateUser/${user.userId}">내 정보</a>
 						<a class="dropdown-item" href="/user/listUserPoint/1">내 포인트</a>
-						<a class="dropdown-item" href="/purchase/getListCustomProduct/1">내 장바구니</a>
-						<a class="dropdown-item" href="/purchase/getListPurchase">내 구매내역</a>
+						<a class="dropdown-item" href="/api/v1/purchase/cart/1">내 장바구니</a>
+						<a class="dropdown-item" href="/api/v1/purchase/">내 구매내역</a>
 						<a class="dropdown-item" href="/community/getProfile/${user.userId}">내 게시글</a>
 						<a class="dropdown-item" href="/product/listLikeProduct/1">찜 목록</a>
 						<c:if test="${user.role == 1}">
@@ -183,7 +183,7 @@
 					<i class="bi bi-search"></i>
 				</button>
 				<c:if test="${ !empty user }">
-					<button style="font-size: 25px;" onclick="window.location.href='/purchase/getListCustomProduct/1'" type="button" class="btn btn-primary">
+					<button style="font-size: 25px;" onclick="window.location.href='/api/v1/purchase/cart/1'" type="button" class="btn btn-primary">
 						<i style="" class="bi bi-cart3"></i>
 					</button>
 				</c:if>				

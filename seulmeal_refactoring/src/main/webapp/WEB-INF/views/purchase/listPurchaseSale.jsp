@@ -21,11 +21,11 @@
 		<form class="form-inline" name="detailForm">
 		
 		<div class="form-group">
-			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/purchase/getListSale/1'">전체</button>
-			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/purchase/getListSale/1/1'">상품준비중</button>
-			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/purchase/getListSale/1/2'">배송중</button>
-			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/purchase/getListSale/1/3'">배송완료</button>
-			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/purchase/getListSale/1/4'">구매확정</button>
+			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/api/v1/purchase/sales/1'">전체</button>
+			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/api/v1/purchase/sales/1/1'">상품준비중</button>
+			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/api/v1/purchase/sales/1/2'">배송중</button>
+			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/api/v1/purchase/sales/1/3'">배송완료</button>
+			 <button type="button" class="btn btn-primary" style="margin-right:10px;" onclick="location.href='/api/v1/purchase/sales/1/4'">구매확정</button>
 		  </div>
 		  
 		 <table class="table table-hover" style="width: 1000px;">
@@ -88,7 +88,7 @@
 			<nav aria-label="...">
 			  <ul class="pagination">
 			  	<c:forEach var="i" begin="${resultPage.beginUnitPage}" end="${resultPage.endUnitPage}">
-			  		<li class="page-item"><a class="page-link" href="/purchase/getListSale/${i}/${search.searchCondition}">${i}</a></li>
+			  		<li class="page-item"><a class="page-link" href="/api/v1/purchase/sales/${i}/${search.searchCondition}">${i}</a></li>
 			  	</c:forEach>
 			  </ul>
 			</nav>
@@ -104,7 +104,6 @@
 		let purchaseStatus=$(ths).data('status');
 		
 		let conf =false;
-		console.log($(ths).closest('td').text().trim());
 		
 		if($(ths).closest('td').text().trim() == "배송하기"){
 			conf=confirm("배송을 진행할까요?");
@@ -115,8 +114,8 @@
 		if(conf){
 			
 			$.ajax({
-				url:"/purchase/api/updatePurchaseCode",
-				method:"POST",  
+				url:"/api/v1/purchase/purchase",
+				method:"PUT",  
 				data:JSON.stringify({
 					purchaseNo : purchaseNo,
 					purchaseStatus: purchaseStatus
@@ -129,7 +128,6 @@
 		        success : function(data){	
 		        	if($(ths).closest('td').text().trim() === '배송하기'){
 		        		$(ths).data("status","3");
-		        		console.log($(ths).data("status"));
 		        		$(ths).text("배송완료하기");
 		        	}else{
 		        		$(ths).closest('td').text('배송완료');
