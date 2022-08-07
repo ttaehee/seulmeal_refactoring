@@ -1,0 +1,56 @@
+server:
+  port: 7100
+  
+  #ssl:
+  #  enabled: true
+  #  key-store: src/main/resources/bootsecurity.p12
+  #  key-store-password: 123456
+  #  key-store-type: PKCS12
+  #  key-alias: bootsecurity
+
+
+spring: 
+  mail: 
+    properties:
+      mail:
+       smtp:
+        auth: true
+        timeout: 5000
+        starttls:
+          enable: true 
+    password: dlvuopafnxbrteel
+    username: ijhghji
+    port: 587
+    host: smtp.gmail.com
+  web:
+    resources:
+      static-locations: /resources/
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
+      #location: C:/Users/bitcamp/git/seulmeal/seulmeal/src/main/webapp/resources/attachments/
+      #location: C:/Users/GHM/git/seulmeal/seulmeal/src/main/webapp/resources/attachments/
+      #location: ./src/main/webapp/resources/attachments/
+      location: /home/tomcat/apache-tomcat-9.0.64/webapps/seulmeal/resources/attachments/
+
+  datasource:
+    url: jdbc:log4jdbc:oracle:thin:@db202204092247_medium?TNS_ADMIN=/home/tomcat/apache-tomcat-9.0.64/webapps/seulmeal/resources/oracleWallet/Wallet_DB202204092247
+    #url: jdbc:log4jdbc:oracle:thin:@db202204092247_medium?TNS_ADMIN=./oracleWallet/Wallet_DB202204092247
+    username: admin
+    password: Vywjdans!234
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    hikari:
+      maximum-pool-size: 3
+
+  mvc: 
+    static-path-pattern: /resources/**
+    view:
+      suffix: .jsp
+      prefix: /WEB-INF/views/
+mybatis:
+  type-aliases-package: shop.seulmeal.service.domain
+  mapper-locations: shop.seulmeal.service.mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
