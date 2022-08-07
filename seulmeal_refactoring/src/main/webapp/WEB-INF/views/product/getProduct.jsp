@@ -492,7 +492,7 @@ div{ -webkit-touch-callout: none;
 	$(function() {
 		 // 구매 버튼
 		 $(".btn-primary:contains('구매')").on("click", function(){
-			 self.location = "/purchase/insertCustomProduct/${product.productNo}";
+			 self.location = "/api/v1/purchase/custom/${product.productNo}";
 		 })
 		 
 		 // 쿠폰버튼
@@ -507,7 +507,7 @@ div{ -webkit-touch-callout: none;
 		 
 		 // 장바구니
 		 $(".btn-primary:contains('구매옵션 보기)").on("click", function(){
-			 self.location = "/purchase/insertCustomProduct/${product.productNo}";
+			 self.location = "/api/v1/purchase/custom/${product.productNo}";
 		 })
 		 
 		  //관련상품

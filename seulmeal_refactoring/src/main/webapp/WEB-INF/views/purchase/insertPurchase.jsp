@@ -38,6 +38,7 @@
         position: absolute;
         font-size: 14px;
       }
+      
 	input[type="checkbox"]:checked + label::after{
         content:'V';
         color: #FF4500;
@@ -356,7 +357,6 @@
 	//포인트사용 비밀번호체크 후 결제금액차감
 	function fnCalTotal(){
 		usepoint = parseInt($('#usepoint').val());
-		console.log(usepoint);
 		
 		if($('#confirm').text()==="적용취소"){
 			let con = confirm("포인트적용을 취소할까요?");
@@ -383,23 +383,18 @@
 				return;
 			}
 			$.ajax({
-				url: "/purchase/api/confirmPassword",
-				method : "POST",
-		        data:JSON.stringify({
-		        	password : password,
-		        	usePoint : usepoint
-				}),
+				url: "/api/v1/purchase/point/"+password+"/"+usepoint,
+				method : "GET",
 				headers : {
 					"Accept" : "application/json",
 					"Content-Type" : "application/json"
 				},
 				dataType : "json",
 		        success : function(data){	
-		        	console.log(data);
+
 		        	if(data.success==='true'){
 		        		toastr.error("포인트적용완료","",{timeOut:2000});
 		        		$("#price").text(total.toLocaleString());
-		        		console.log(parseInt($('#price').text().replace(",","")));
 		        		
 		        		$('#confirm').text('적용취소');
 		        		document.getElementById('usepoint').readOnly = true;
@@ -421,7 +416,7 @@
 		}
 	}
 	
-	//체크박스 하나만 선택
+	//체크박스 선택
 	function fncClickCheck(ths) {
 	    document.querySelectorAll(`input[type=checkbox]`)
 	    	.forEach(el => el.checked = false);
@@ -452,7 +447,6 @@
 		const userId = $('#userId').val();
 		const name = $('#name').val();
 		const address = $('#sample3_postcode').val() +"/"+ $('#sample3_address').val() +"/"+ $('#address').val();
-		console.log(address);
 		const phone = $('#phone').val();
 		const email = $('#email').val();
 		const message = $('#message').val();
@@ -466,7 +460,7 @@
 			$(".cc").append(`<input type="hidden" name ="paymentCondition" value="1">`);
 			$(".cc").append(`<input type="hidden" name ="address" value="\${address}">`);
 					
-			$("form").attr("method" , "POST").attr("action" , "/purchase/insertPurchase").submit();
+			$("form").attr("method" , "POST").attr("action" , "/api/v1/purchase/point").submit();
 			
 		//아임포트결제
 		}else{
@@ -474,7 +468,7 @@
 			const paymentCondition = $('#paymentCondition').val();
 
 			$.ajax({
-				url:"/purchase/api/insertPurchase",
+				url:"/api/v1/purchase/purchase",
 				method:"POST",
 				data:JSON.stringify({
 					name : name,
@@ -493,7 +487,6 @@
 				},
 				dataType : "json",
 				success : function(data){
-					console.log(data);
 					IMP.init('imp83644059'); 
 					IMP.request_pay(
 					    { 
@@ -510,7 +503,7 @@
 								var msg = '결제가 완료되었습니다.';
 				  		      	
 				  		      	 $.ajax({
-				  		  			url:"api/verifyIamport",
+				  		  			url:"/api/v1/purchase/iamport",
 				  		  			method:"POST",
 				  		  			data:JSON.stringify({
 				  		  				imp_uid : rsp.imp_uid,
@@ -523,8 +516,7 @@
 				  		  			},
 				  		  			dataType : "json",
 				  		  			success : function(data){
-				  		  				console.log(data);
-				  		  				window.location.href='/purchase/getPurchase/' + data.purchase.purchaseNo;
+				  		  				window.location.href='/api/v1/purchase/purchase/' + data.purchase.purchaseNo;
 				  		  			}
 				  		      	 })
 							}else{

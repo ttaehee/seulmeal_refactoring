@@ -160,9 +160,9 @@
 				  		<img class="thumbnail" src='/resources/attachments/${cpd.product.thumbnail}'>
 				  	</a>
 				  </td>
-				  <td class="link" align="center" style="cursor:pointer;" onClick="window.location.href='/purchase/getPurchase/${purchase.purchaseNo}'">${cpd.count}</td>
-				  <td class="link" align="left" style="cursor:pointer;" onClick="window.location.href='/purchase/getPurchase/${purchase.purchaseNo}'">${cpd.product.name}</td>
-				  <td class="link" align="left" style="cursor:pointer;" onClick="window.location.href='/purchase/getPurchase/${purchase.purchaseNo}'">
+				  <td class="link" align="center" style="cursor:pointer;" onClick="window.location.href='/api/v1/purchase/purchase/${purchase.purchaseNo}'">${cpd.count}</td>
+				  <td class="link" align="left" style="cursor:pointer;" onClick="window.location.href='/api/v1/purchase/purchase/${purchase.purchaseNo}'">${cpd.product.name}</td>
+				  <td class="link" align="left" style="cursor:pointer;" onClick="window.location.href='/api/v1/purchase/purchase/${purchase.purchaseNo}'">
 				  <c:forEach var="pp" items="${cpd.plusParts}">
 				  	+ ${pp.parts.name}, ${pp.gram}g, <fmt:formatNumber type="number" maxFractionDigits="0"  value="${pp.parts.price*pp.gram/10}" />원 <br/>
 				  	</c:forEach>
@@ -170,7 +170,7 @@
 				  	- ${mp.minusName} <br/>
 				  	</c:forEach>
 				  </td>
-				  <td class="link" align="center" style="cursor:pointer;" onClick="window.location.href='/purchase/getPurchase/${purchase.purchaseNo}'"><fmt:formatNumber type="number" maxFractionDigits="0"  value="${cpd.price}"/>원</td>
+				  <td class="link" align="center" style="cursor:pointer;" onClick="window.location.href='/api/v1/purchase/purchase/${purchase.purchaseNo}'"><fmt:formatNumber type="number" maxFractionDigits="0"  value="${cpd.price}"/>원</td>
 				  <c:set var="price" value="${price+cpd.price*cpd.count}" />
 			 	  <td>	
 		          	<a type="button" class="delete" data-value="${purchase.purchaseNo}" onClick="fncDelete(this)">&ensp;x</a>      	
@@ -187,7 +187,7 @@
 	//getListPurchase submit
       function fncGetListPurchase(currentPage) {
 
-  		$("form").attr("method" , "POST").attr("action" , "/purchase/getListPurchase").submit();
+  		$("form").attr("method" , "POST").attr("action" , "/api/v1/purchase/").submit();
   	  }
   	
 	//기간별 구매내역리스트 버튼
@@ -203,14 +203,13 @@
 	function fncPurchaseStatus(ths){
 		
 		let purchaseNo=$(ths).data('value');	
-
 		let status = confirm("구매확정하시겠습니까?");
 		
 		if(status){
 			
 			$.ajax({
-				url:"/purchase/api/updatePurchaseCode",
-				method:"POST",  
+				url:"/api/v1/purchase/purchase",
+				method:"PUT",  
 				data:JSON.stringify({
 					purchaseNo : purchaseNo,
 					purchaseStatus: "4"
@@ -263,10 +262,25 @@
 	
 	//구매내역리스트에서 삭제
 	function fncDelete(ths){
-		var del = confirm("구매내역에서 삭제할까요?");	
-		const purchaseNo = $(ths).data('value');
+		
+		let del = confirm("구매내역에서 삭제할까요?");	
+		let purchaseNo = $(ths).data('value');
 		if(del){
-			window.location.href="/purchase/deletePurchase/"+purchaseNo;
+			
+			$.ajax({
+				url:"/api/v1/purchase/purchase/"+purchaseNo,
+				method:"DELETE",
+				headers : {
+					"Accept" : "application/json",
+					"Content-Type" : "application/json"
+				},
+				dataType : "json",
+				success : function(data){
+					window.location.href='/api/v1/purchase/';
+				}
+
+			})//ajax
+			
 		}
 	}
 	
@@ -291,7 +305,7 @@
 				function getListPurchase(){
 								
 					$.ajax({
-						url:"/purchase/api/getListPurchase/"+currentPage+"/${search.searchCondition}",
+						url:"/api/v1/purchase/purchases/"+currentPage+"/${search.searchCondition}",
 						type:"GET",
 						datatype:"json",
 						success: function(data, status, jqXHR){												
@@ -335,14 +349,14 @@
 								
 								purchaseListHtml = 
 
-									`<tr class='ct_list_pop'><td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/purchase/getPurchase/`+purchaseOne.purchaseNo+ `'"><br/><br/>`
+									`<tr class='ct_list_pop'><td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/api/v1/purchase/purchase/`+purchaseOne.purchaseNo+ `'"><br/><br/>`
 									+purchaseOne.regDate+"&ensp;["+purchaseOne.purchaseNo+"]</a><br/><br/><div>"+status
 									+"</div></td><td align='left'><a href='/product/getProduct/"+cpd.product.productNo+"' class='btn btn-primary'><img class='thumbnail' src='/resources/attachments/"+cpd.product.thumbnail+"'></a></td>"
-									+`<td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/purchase/getPurchase/`+purchaseOne.purchaseNo+ `'">`+cpd.count 
-									+`</td><td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/purchase/getPurchase/`+purchaseOne.purchaseNo+ `'">` + cpd.product.name 
-									+`</td><td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/purchase/getPurchase/`+purchaseOne.purchaseNo+ `'">`
+									+`<td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/api/v1/purchase/purchase/`+purchaseOne.purchaseNo+ `'">`+cpd.count 
+									+`</td><td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/api/v1/purchase/purchase/`+purchaseOne.purchaseNo+ `'">` + cpd.product.name 
+									+`</td><td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/api/v1/purchase/purchase/`+purchaseOne.purchaseNo+ `'">`
 									+ ppartsHTML + mpartsHTML
-									+`</td><td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/purchase/getPurchase/`+purchaseOne.purchaseNo+ `'">`+cpd.price.toLocaleString() + "원</td>"
+									+`</td><td class='link' align='center' style='cursor:pointer;' onClick="window.location.href='/api/v1/purchase/purchase/`+purchaseOne.purchaseNo+ `'">`+cpd.price.toLocaleString() + "원</td>"
 									+"<td><a type='button' class='delete' data-value='"+purchaseOne.purchaseNo+"' onClick='fncDelete(this)'>&ensp;x</a></td></tr>";							
 
 								$("table tbody:last-child").append(purchaseListHtml);
@@ -358,8 +372,6 @@
 							
 						}//success
 						, error: function(status, jqXHR){
-							console.log("error status: "+ status);
-							console.log("jqXHR: "+ jqXHR);
 							toastr.error("페이지 로드 실패","",{timeOut:2000});
 						}
 						

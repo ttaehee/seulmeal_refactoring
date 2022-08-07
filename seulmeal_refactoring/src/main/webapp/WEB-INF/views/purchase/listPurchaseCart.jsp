@@ -224,7 +224,7 @@
 				<nav aria-label="...">
 				  <ul class="pagination">
 				  	<c:forEach var="i" begin="${resultPage.beginUnitPage}" end="${resultPage.endUnitPage}">
-				  		<li class="page-item"><a class="page-link" href="/purchase/getListCustomProduct/${i}">${i}</a></li>
+				  		<li class="page-item"><a class="page-link" href="/api/v1/purchase/cart/${i}">${i}</a></li>
 				  	</c:forEach>
 				  </ul>
 				</nav>
@@ -337,15 +337,15 @@
 			return;
 		}
 		
-  		$(".list").attr("method" , "GET").attr("action" , "/purchase/insertPurchase").submit();
+  		$(".list").attr("method" , "GET").attr("action" , "/api/v1/purchase/purchase").submit();
   	  }
 	
 	//장바구니 수량변경 후 가격디스플레이변경
 	function fnCalCartCount(type, ths){
-		var stat = $(ths).parents("td").find("span[name='count']").text();
-		var num = parseInt(stat,10);
-		var price = parseInt($(ths).parents("tr").find("span[name='price']").text().replace(",",""));
-		var oneprice = parseInt(price,10)/num;
+		let stat = $(ths).parents("td").find("span[name='count']").text();
+		let num = parseInt(stat,10);
+		let price = parseInt($(ths).parents("tr").find("span[name='price']").text().replace(",",""));
+		let oneprice = parseInt(price,10)/num;
 		
 		if(type=='minus'){
 			num--;
@@ -373,8 +373,8 @@
 		const count = $(ths).parents("td").find("span[name='count']").text();
 		
 		$.ajax({
-			url:"/purchase/api/updateCustomProduct/"+customProductNo+"/"+count,
-			method:"GET",
+			url:"/api/v1/purchase/cart/"+customProductNo+"/"+count,
+			method:"PUT",
 	        headers : {
 	            "Accept" : "application/json",
 	            "Content-Type" : "application/json"
@@ -396,7 +396,7 @@
 			
 			//상품구성재료
 			$.ajax({
-				url:"/purchase/api/getCustomProduct/"+customproductNo,
+				url:"/api/v1/purchase/customcart/"+customproductNo,
 				method:"GET",
 		        headers : {
 		            "Accept" : "application/json",
@@ -404,7 +404,7 @@
 		        },
 		        dataType : "json",
 		        success : function(data){	
-		        	for(var i=0; i<data.partsList.length; i++){
+		        	for(let i=0; i<data.partsList.length; i++){
 		        		const productParts = "<div class='container productparts' style='line-height:35px;'>"+data.partsList[i].name+"</div>";
 						const productPartsButton = "<button type='button' class='btn btn-outline-primary except' data-partsNo='"+ data.partsList[i].productPartsNo +"' data-partsName='" + data.partsList[i].name +"' onClick='fncClickExcept(this)'>제외하기</button>"
 		        		
@@ -425,7 +425,20 @@
 			let del = confirm("장바구니에서 삭제할까요?");	
 			let customproductNo = $(this).data('value');
 			if(del){
-				window.location.href="/purchase/deleteCustomProduct/"+customproductNo;
+				
+				$.ajax({
+					url:"/api/v1/purchase/cart/"+customproductNo,
+					method:"DELETE",
+					headers : {
+						"Accept" : "application/json",
+						"Content-Type" : "application/json"
+					},
+					dataType : "json",
+					success : function(data){
+						window.location.href='/api/v1/purchase/cart/1';
+					}
+
+				})//ajax		
 			}
 		});
 	})
@@ -435,14 +448,32 @@
 		let checkBoxArr = []; 
 		$("input:checkbox[name='check']:checked").each(function() {
 		    checkBoxArr.push($(this).attr("data-customProductNo"));     // 체크된 것만 값을 뽑아서 배열에 push
-		    console.log(checkBoxArr);
 		})
 		
 		if(checkBoxArr.length>0){
 		    let del = confirm("선택된 상품을 장바구니에서 삭제할까요?");	
 		    if(del){
-				$(".list").append(`<input type="hidden" name ="checkBoxArr" value="\${checkBoxArr}">`);	
-				$(".list").attr("method" , "POST").attr("action" , "/purchase/deleteCustomProduct").submit();
+				//$(".list").append(`<input type="hidden" name ="_method" value="delete"`);	
+				//$(".list").append(`<input type="hidden" name ="checkBoxArr" value="\${checkBoxArr}">`);	
+				//$(".list").attr("method" , "DELETE").attr("action" , "/api/v1/purchase/cart").submit();
+				
+				
+				$.ajax({
+					url:"/api/v1/purchase/cart",
+					method:"DELETE",
+					data : JSON.stringify(checkBoxArr),
+					headers : {
+						"Accept" : "application/json",
+						"Content-Type" : "application/json"
+					},
+					dataType : "json",
+					success : function(data){
+						console.log(data);
+						window.location.href='/api/v1/purchase/cart/1';
+					}
+
+				})//ajax
+				
 		    }
 		}else{
 			toastr.error("삭제할 상품을 선택해주세요.","",{timeOut:2000});
@@ -477,23 +508,24 @@
 		$(".cc").append(`<input type="hidden" name ="minusNameA" value="\${minusName}">`);
 		$(".cc").append(`<input type="hidden" name ="price" value="\${customprice}">`);
 		$(".cc").append(`<input type="hidden" name ="cartStatus" value="\${cartStatus}">`);
-		$(".cc").attr("method" , "POST").attr("action" , "/purchase/updateCustomProduct").submit();
+		$(".cc").attr("method" , "POST").attr("action" , "/api/v1/purchase/customcart").submit();
 
 	 }
 	
 	//제외하기버튼클릭시 안에서 사용(상품구성재료 제외안되어있으면 제외하기)
 	function fncExcept(partsNo, partsName, ths){
+		
 		minusNo.push(partsNo);
-
         minusName.push(partsName);
         
         toastr.error(" 제외되었습니다.",`\${partsName}`,{timeOut:2000});
         ths.text("제외취소하기");
 	}
+	
 	//상품구성재료 제외하기버튼 클릭
 	function fncClickExcept(ths) {
-		const partsNo = $(ths).attr('data-partsNo');	
-    	const partsName = $(ths).attr('data-partsName'); 
+		let partsNo = $(ths).attr('data-partsNo');	
+    	let partsName = $(ths).attr('data-partsName'); 
     	
     	if(minusNo.length == 0){
     		fncExcept(partsNo, partsName, $(ths));
@@ -507,14 +539,10 @@
     			minusNo.splice(i,1);
     			minusName.splice(i,1);
     			$(ths).text("제외하기");
-    			console.log("ddminusNo"+minusNo);
-    			console.log("ddminusName"+minusName);
     			return;
     		}
     	}
     	fncExcept(partsNo, partsName, $(ths));
-    	console.log("ggminusNo"+minusNo);
-    	console.log("ggminusName"+minusName);
     	return;
 	 }
 	
@@ -529,8 +557,8 @@
 	
 	//추가재료 g변경
 	function fnCalGram(type, ths){
-		var stat = $(ths).closest("div").find("span[name='gram']").text();
-		var num = parseInt(stat,10);		
+		let stat = $(ths).closest("div").find("span[name='gram']").text();
+		let num = parseInt(stat,10);		
 		let calprice = parseInt($(ths).closest("div").find("span[name='partsprice']").text());
 	
 		if(type=='minus'){
@@ -588,7 +616,6 @@
 		               $(".plusparts").append(parts); 
 		                              
 		                const productprice = $("#customPrice").text().replace(",","");
-		                console.log("productprice"+productprice);
 		                const result = parseInt(productprice)+parseInt(data.price);
 		                $("#customPrice").text(result.toLocaleString());
 			        }
@@ -605,11 +632,11 @@
 		 $(".search").autocomplete({ 
 			 source : function(request, response) { //source: 입력시 보일 목록
 			     $.ajax({
-			           url : "/purchase/api/autocomplete"   
+			           url : "/api/v1/purchase/autocomplete"   
 			         , type : "POST"
 			         , dataType: "JSON"
 			         , data : {value: request.term}	// 검색 키워드
-			         , success : function(data){ 	// 성공
+			         , success : function(data){ 	
 			        	 response(
 			                 $.map(data.resultList, function(item) {
 			                     return {
@@ -619,7 +646,7 @@
 			                 })
 			             );    //response
 			         }
-			         ,error : function(){ //실패
+			         ,error : function(){
 			        	 toastr.error("재료없음","",{timeOut:2000});
 			         }
 			     });
@@ -630,8 +657,6 @@
 				minLength: 1,// 최소 글자수
 				delay: 100	//autocomplete 딜레이 시간(ms),
 				, select : function(evt, ui) { 
-		      	// 아이템 선택시 실행 ui.item 이 선택된 항목을 나타내는 객체, lavel/value를 가짐
-					console.log(ui.item.label);
 			 }
 		 });
 		 
@@ -675,8 +700,8 @@
 	
 	//커스터마이징 한 상품 수량변경
 	function fnCalCount(type, ths){
-		var statcount = $(ths).parents("div").find("span[name='optionCount']").text();
-		var number = parseInt(statcount,10);
+		let statcount = $(ths).parents("div").find("span[name='optionCount']").text();
+		let number = parseInt(statcount,10);
 	
 		if(type=='minus'){
 			number--;

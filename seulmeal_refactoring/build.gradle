@@ -22,14 +22,14 @@ repositories {
 bootWar.enabled = false
 war.enabled = true
 dependencies {
-	// �옄諛붾찓�씪
+	// boot
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	
-	// 梨꾪똿
+	// websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	
-	// 留덉씠諛뷀떚�뒪
+	// mybatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
 	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4:1.16'
 	
@@ -44,7 +44,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation group: 'org.springframework.security', name: 'spring-security-taglibs', version: '5.5.0'
 	
-	// oracle db 蹂댁븞
+	// oracle db
 	implementation group: 'com.oracle.database.security', name: 'osdt_cert', version: '21.3.0.0'
 	implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '21.3.0.0'
 	implementation group: 'com.oracle.database.security', name: 'osdt_core', version: '21.3.0.0'

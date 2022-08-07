@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +72,30 @@ public class PurchaseRestController {
 		return customProduct;	
 	}	
 	
+	//커스터마이징 상품 장바구니에서 낱개삭제 
+	@DeleteMapping("cart/{customProductNo}")
+	@Transactional(rollbackFor= {Exception.class})
+	public int deleteCustomProduct(@PathVariable int customProductNo) {
+
+		int success = purchaseService.deleteCustomProduct(customProductNo);
+		
+		return success;
+	}
+	
+	//커스터마이징 상품 장바구니에서 선택다중삭제 
+	@DeleteMapping("cart")
+	@Transactional(rollbackFor= {Exception.class})
+	public int deleteCustomProduct(@RequestBody String checkBoxArr) {
+		
+		String[] check = (checkBoxArr.substring(1,checkBoxArr.length()-1)).split(",");
+
+		for(String customProductNo : check ) {
+			purchaseService.deleteCustomProduct(Integer.parseInt(customProductNo.substring(1, customProductNo.length()-1)));
+		}
+		
+		return 1;
+	}
+	
 	//커스터마이징 상품 옵션수정화면 출력
 	@GetMapping("customcart/{customProductNo}")
 	@Transactional(rollbackFor= {Exception.class})
@@ -88,11 +113,8 @@ public class PurchaseRestController {
 	}	
 	
 	//포인트사용 시 비밀번호확인
-	@GetMapping("point")
-	public JSONObject confirmPassword(@RequestBody Map temp, HttpSession session) throws Exception {
-		
-		String password=(String)temp.get("password");
-		int usePoint=(int)temp.get("usePoint");
+	@GetMapping("point/{password}/{usePoint}")
+	public JSONObject confirmPassword(@PathVariable String password, @PathVariable int usePoint, HttpSession session) throws Exception {
 		
 		User user=(User)session.getAttribute("user");
 		String realPw=user.getPassword();
@@ -262,5 +284,17 @@ public class PurchaseRestController {
            userService.updateUserTotalPoint(user);
          }           
          return plusPoint;
-      }   
+      } 
+   
+	//구매내역 삭제 
+	@DeleteMapping("purchase/{purchaseNo}")
+	@Transactional(rollbackFor= {Exception.class})
+	public int deletePurchase(@PathVariable int purchaseNo) {
+		
+		int success = purchaseService.deletePurchase(purchaseNo);
+		
+		return success;
+	}	
+	
+	
 }

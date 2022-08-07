@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -94,7 +95,7 @@ public class PurchaseController {
 		}
 		
 		if(customProduct.getCartStatus().equals("1")) {
-			return "redirect:/purchase/getListCustomProduct/1";
+			return "redirect:/api/v1/purchase/cart/1";
 		}else {
 			model.addAttribute("customProduct", customProduct);
 			model.addAttribute("cartStatus", "0");
@@ -155,31 +156,7 @@ public class PurchaseController {
 		}
 		
 		return "redirect:/api/v1/purchase/cart/1";
-	}	
-		
-	//커스터마이징 상품 장바구니에서 낱개삭제 
-	@DeleteMapping("cart/{customProductNo}")
-	@Transactional(rollbackFor= {Exception.class})
-	public String deleteCustomProduct(@PathVariable int customProductNo) {
-
-		purchaseService.deleteCustomProduct(customProductNo);
-		
-		return "redirect:/api/v1/purchase/cart/1";
-	}	
-	
-	//커스터마이징 상품 장바구니에서 선택다중삭제 
-	@DeleteMapping("cart")
-	@Transactional(rollbackFor= {Exception.class})
-	public String deleteCustomProduct(String checkBoxArr) {
-		
-		String[] check = checkBoxArr.split(",");
-
-		for(String customProductNo : check ) {
-			purchaseService.deleteCustomProduct(Integer.parseInt(customProductNo));
-		}
-		
-		return "redirect:/api/v1/purchase/cart/1";
-	}	
+	}			
 	
 	//장바구니 거쳐서 구매정보입력창
 	@GetMapping("purchase")
@@ -259,7 +236,7 @@ public class PurchaseController {
 	}	
 	
 	//구매내역리스트 
-	@RequestMapping(value="")
+	@RequestMapping(value="/")
 	public String getListPurchase(Search search, Model model, HttpSession session) throws Exception {
 		
 		User user=(User)session.getAttribute("user");
@@ -282,16 +259,6 @@ public class PurchaseController {
 
 		return "purchase/listPurchase";
 	}
-	
-	//구매내역 삭제 
-	@DeleteMapping("purchase/{purchaseNo}")
-	@Transactional(rollbackFor= {Exception.class})
-	public String deletePurchase(@PathVariable int purchaseNo) {
-		
-		purchaseService.deletePurchase(purchaseNo);
-		
-		return "redirect:/api/v1/purchase/purchases";
-	}	
 	
 	//판매내역목록
 	@RequestMapping(value= {"/sales/{currentPage}/{purchaseStatus}", "/sales/{currentPage}", "/sales"})
