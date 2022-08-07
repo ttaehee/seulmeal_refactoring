@@ -37,23 +37,15 @@ import shop.seulmeal.service.user.UserService;
 @RequiredArgsConstructor
 public class PurchaseController {
 	
-	@Autowired
-	@Qualifier("purchaseServiceImpl")
-	private PurchaseService purchaseService;
-	
-	@Autowired
-	@Qualifier("productServiceImpl")
-	private ProductService productService;
-	
-	@Autowired
-	@Qualifier("userServiceImpl")
-	private UserService userService;
+	private final PurchaseService purchaseService;
+	private final ProductService productService;
+	private final UserService userService;
 	
 	@Value("${pageUnit}")
-	int pageUnit;
+	private int pageUnit;
 	
 	@Value("${pageSize}")
-	int pageSize;
+	private int pageSize;
 	
 	
 	//커스터마이징 옵션선택 화면출력 
@@ -141,7 +133,7 @@ public class PurchaseController {
 	}	
 	
 	//커스터마이징 상품 옵션수정(커스터마이징재료 삭제 후 추가)
-	@PostMapping("cart")
+	@PostMapping("customcart")
 	@Transactional(rollbackFor= {Exception.class})
 	public String updateCustomProduct(CustomProduct customProduct, Model model, HttpSession session,
 			// 제외 재료
@@ -212,7 +204,7 @@ public class PurchaseController {
 	}
 	
 	//포인트만으로 결제시
-	@PostMapping("purchase")
+	@PostMapping("point")
 	public String insertPurchase(Purchase purchase, Integer[] customProductNo, @AuthenticationPrincipal User user, Point point, Model model) throws Exception {
 
 		purchase.setUser(user);
@@ -267,7 +259,7 @@ public class PurchaseController {
 	}	
 	
 	//구매내역리스트 
-	@RequestMapping(value="purchases")
+	@RequestMapping(value="")
 	public String getListPurchase(Search search, Model model, HttpSession session) throws Exception {
 		
 		User user=(User)session.getAttribute("user");

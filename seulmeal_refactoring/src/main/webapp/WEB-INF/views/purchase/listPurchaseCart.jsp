@@ -467,28 +467,18 @@
 	
 	//form updateCustomProduct
 	function fncUpdateCustomProduct(ths) {
-		
-		/* const plusParts = $('.name');
-		let plustString="";
-		for(let i=0; i<plusParts.length; i++){
-			plustString += $(plusParts[i]).text();
-			i==plusParts.length-1 ? plustString+="" : plustString+=", ";	
-		}
-		
-		let conf = confirm(`제외재료 : \${minusName}, 추가재료 : \${plustString}`);
-		if(conf){ */
 
-			const count = $("#customProductCount").text();
-			const customprice= $("#customPrice").text().replace(",","");
-			const cartStatus = $(ths).val();
-			
-			$(".cc").append(`<input type="hidden" name ="count" value="\${count}">`);
-			$(".cc").append(`<input type="hidden" name ="minusNoA" value="\${minusNo}">`);
-			$(".cc").append(`<input type="hidden" name ="minusNameA" value="\${minusName}">`);
-			$(".cc").append(`<input type="hidden" name ="price" value="\${customprice}">`);
-			$(".cc").append(`<input type="hidden" name ="cartStatus" value="\${cartStatus}">`);
-			$(".cc").attr("method" , "POST").attr("action" , "/purchase/updateCustomProduct").submit();
-		//}
+		const count = $("#customProductCount").text();
+		const customprice= $("#customPrice").text().replace(",","");
+		const cartStatus = $(ths).val();
+		
+		$(".cc").append(`<input type="hidden" name ="count" value="\${count}">`);
+		$(".cc").append(`<input type="hidden" name ="minusNoA" value="\${minusNo}">`);
+		$(".cc").append(`<input type="hidden" name ="minusNameA" value="\${minusName}">`);
+		$(".cc").append(`<input type="hidden" name ="price" value="\${customprice}">`);
+		$(".cc").append(`<input type="hidden" name ="cartStatus" value="\${cartStatus}">`);
+		$(".cc").attr("method" , "POST").attr("action" , "/purchase/updateCustomProduct").submit();
+
 	 }
 	
 	//제외하기버튼클릭시 안에서 사용(상품구성재료 제외안되어있으면 제외하기)

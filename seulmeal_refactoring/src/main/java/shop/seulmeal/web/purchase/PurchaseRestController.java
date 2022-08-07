@@ -8,8 +8,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +15,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import shop.seulmeal.common.Page;
+import lombok.RequiredArgsConstructor;
 import shop.seulmeal.common.Search;
 import shop.seulmeal.service.domain.CustomProduct;
 import shop.seulmeal.service.domain.Parts;
@@ -35,30 +34,20 @@ import shop.seulmeal.service.purchase.PurchaseService;
 import shop.seulmeal.service.user.UserService;
 
 @RestController
-@RequestMapping("/purchase/api/*")
+@RequestMapping("/api/v1/purchase/*")
+@RequiredArgsConstructor 
 public class PurchaseRestController {
 	
-	@Autowired
-	@Qualifier("purchaseServiceImpl")
-	private PurchaseService purchaseService;
-	
-	@Autowired
-	@Qualifier("productServiceImpl")
-	private ProductService productService;
-	
-	@Autowired
-	@Qualifier("userServiceImpl")
-	private UserService userService;
+	private final PurchaseService purchaseService;
+	private final ProductService productService;
+	private final UserService userService;
 	
 	@Value("${pageUnit}")
-	int pageUnit;
+	private int pageUnit;
 	
 	@Value("${pageSize}")
-	int pageSize;
+	private int pageSize;
 	
-	public PurchaseRestController(){
-		System.out.println(this.getClass());
-	}
 	
 	//오토컴플릿
 	@PostMapping("autocomplete")
@@ -71,28 +60,22 @@ public class PurchaseRestController {
 	}
 
 	//장바구니에서 수량변경
-	@GetMapping("updateCustomProduct/{customProductNo}/{count}")
+	@PutMapping("cart/{customProductNo}/{count}")
 	public CustomProduct updateCusotmProduct(@PathVariable int customProductNo, @PathVariable int count, CustomProduct customProduct) throws Exception {
 	
-		System.out.println("/purchase/api/updateCusotmProduct : "+customProductNo+count);
-		
 		customProduct=purchaseService.getCustomProduct(customProductNo);
 		customProduct.setCount(count);
 		
-		int result = purchaseService.updateCustomProductCount(customProduct);
-		System.out.println("update: "+result);
+		purchaseService.updateCustomProductCount(customProduct);
 
 		return customProduct;	
-		
 	}	
 	
-	//커스터마이징 상품 옵션수정
-	@GetMapping("getCustomProduct/{customProductNo}")
+	//커스터마이징 상품 옵션수정화면 출력
+	@GetMapping("customcart/{customProductNo}")
 	@Transactional(rollbackFor= {Exception.class})
 	public Map<String, Object> getCustomProduct(@PathVariable int customProductNo, CustomProduct customProduct, Model model) throws Exception {
-		
-		System.out.println("/purchase/api/getCustomProduct :Get");
-		
+
 		customProduct=purchaseService.getCustomProduct(customProductNo);
 		
 		List<Parts> partsList=productService.getProductParts(customProduct.getProduct().getProductNo());
@@ -105,10 +88,8 @@ public class PurchaseRestController {
 	}	
 	
 	//포인트사용 시 비밀번호확인
-	@PostMapping("confirmPassword")
+	@GetMapping("point")
 	public JSONObject confirmPassword(@RequestBody Map temp, HttpSession session) throws Exception {
-	
-		System.out.println("/purchase/api/confirmPassword : "+temp);
 		
 		String password=(String)temp.get("password");
 		int usePoint=(int)temp.get("usePoint");
@@ -131,10 +112,8 @@ public class PurchaseRestController {
 	}	
 	
 	//아임포트 결제 전 DB에 insertPurchase
-	@PostMapping("insertPurchase")
+	@PostMapping("purchase")
 	public Purchase insertPurchase(@RequestBody Map<String, Object> map, Purchase purchase, Point point, HttpSession session) throws Exception {
-		
-		System.out.println("/purchase/api/insertPurchase :"+map);
 		
 		User user=(User)(session.getAttribute("user"));
 		
@@ -149,7 +128,7 @@ public class PurchaseRestController {
 		purchase.setUsePoint(Integer.parseInt((String)map.get("usePoint")));
 		
 		//insert
-		int result=purchaseService.insertPurchase(purchase);
+		purchaseService.insertPurchase(purchase);
 		
 		//커스터마이징상품에 구매번호추가 but 결제중 취소할 수 있으니 구매상태는 구매완료가 아닌 0
 		ArrayList customProductNo=(ArrayList) map.get("customProductNo");
@@ -163,31 +142,25 @@ public class PurchaseRestController {
 			cpList.add(cp);
 		}
 		
-		//get
+		//구매 insert 하자마자 구매정보 get
 		purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
 		purchase.setUser(user);
 
-		return purchase;	
-		
+		return purchase;		
 	}	
 	
 	//아임포트 검증
-	@PostMapping("verifyIamport")
+	@PostMapping("iamport")
 	public JSONObject verifyIamport(@RequestBody Purchase purchase, Point point, HttpSession session) throws Exception {
 		
-		System.out.println("/purchase/api/verifyIamport : "+purchase);
-		
 		//결제완료 시 구매상태 상품준비중으로 변경
-		int success=purchaseService.updatePurchase(purchase);
-		System.out.println("/purchase/api/verifyIamport update : "+success);
+		int success = purchaseService.updatePurchase(purchase);
 			
 		purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
-		System.out.println("/purchase/api/verifyIamport purchaseNo : "+ purchase.getPurchaseNo());
 		User user=(User)(session.getAttribute("user"));
 		purchase.setUser(user);		
 		
 		String token=purchaseService.getImportToken();
-		System.out.println("/purchase/api/verifyIamport token : "+ token);
 		
 		JSONObject json=new JSONObject();
 		if(success ==1) {
@@ -233,11 +206,9 @@ public class PurchaseRestController {
 	}
 	
 	//구매내역리스트 무한스크롤
-	@RequestMapping(value={"/getListPurchase","/getListPurchase/{currentPage}", "/getListPurchase/{currentPage}/{searchCondition}"})
+	@RequestMapping(value={"/purchases","/purchases/{currentPage}", "/purchases/{currentPage}/{searchCondition}"})
 	public List<Purchase> getListPurchase(@PathVariable int currentPage, @PathVariable(required = false) String searchCondition, Search search, HttpSession session)
 			throws Exception {
-		
-		System.out.println("/purchase/api/getListPurchase : "+currentPage);
 		
 		User user=(User)session.getAttribute("user");
 		String userId=user.getUserId();
@@ -256,11 +227,9 @@ public class PurchaseRestController {
 	}
 	
 	//배송하기, 구매확정 후 구매처리상태변경
-   @PostMapping("updatePurchaseCode")
+   @PutMapping("purchase")
    public int updatePurchaseCode(@RequestBody Purchase purchase, Point point, HttpSession session) throws Exception{
 
-         System.out.println("/purchase/api/updatePurchaseCode : POST"+purchase);
-         
          purchaseService.updatePurchaseCode(purchase);
          purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
          User user=(User)(session.getAttribute("user"));

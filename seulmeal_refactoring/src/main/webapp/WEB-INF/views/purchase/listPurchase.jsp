@@ -294,12 +294,7 @@
 						url:"/purchase/api/getListPurchase/"+currentPage+"/${search.searchCondition}",
 						type:"GET",
 						datatype:"json",
-						success: function(data, status, jqXHR){
-
-							//console.log("success status: "+ status);
-							//console.log("data: " + data);
-							//console.log("jqXHR: "+ jqXHR);
-							//console.log("json/stringify: "+JSON.stringify(data));													
+						success: function(data, status, jqXHR){												
 							
 							//purchaseList
 							for(let i = 0; i<data.length; i++){
