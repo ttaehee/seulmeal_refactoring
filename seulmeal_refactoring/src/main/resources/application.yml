@@ -34,7 +34,7 @@ spring:
       location: ./src/main/webapp/resources/attachments/
 
   datasource:
-    url: jdbc:log4jdbc:oracle:thin:@db202204092247_medium?TNS_ADMIN=./oracleWallet/Wallet_DB202204092247
+    url: jdbc:log4jdbc:oracle:thin:@db202204092247_medium?TNS_ADMIN=D:/oraclewallet/Wallet_DB202204092247
     username: admin
     password: Vywjdans!234
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
@@ -42,13 +42,12 @@ spring:
       maximum-pool-size: 3
 
   mvc: 
-    hiddenmethod:
-      filter:
-        enabled: true
     static-path-pattern: /resources/**
     view:
       suffix: .jsp
       prefix: /WEB-INF/views/
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
 
 mybatis:
   type-aliases-package: shop.seulmeal.service.domain
