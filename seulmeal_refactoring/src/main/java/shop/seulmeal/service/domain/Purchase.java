@@ -3,8 +3,6 @@ package shop.seulmeal.service.domain;
 import java.sql.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

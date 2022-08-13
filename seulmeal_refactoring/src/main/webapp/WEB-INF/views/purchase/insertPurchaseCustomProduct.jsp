@@ -300,12 +300,20 @@
 	 $(function(){ 
 		 $(".search").autocomplete({ 
 			 source : function(request, response) { //source: 입력시 보일 목록
+				 console.log(request);
 			     $.ajax({
 			           url : "/api/v1/purchase/autocomplete", 
 			           type : "POST",
-			           dataType: "JSON",
-			           data : {value: request.term},	// 검색 키워드
+			           data : JSON.stringify({
+			        	   value: request.term
+			        	}),	// 검색 키워드
+			        	headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						dataType : "json",
 			           success : function(data){ 
+			        	   console.log(data)
 			        	 response(
 			                 $.map(data.resultList, function(item) {
 			                     return {

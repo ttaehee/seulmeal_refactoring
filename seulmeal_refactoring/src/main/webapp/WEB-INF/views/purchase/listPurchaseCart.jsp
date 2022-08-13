@@ -453,10 +453,6 @@
 		if(checkBoxArr.length>0){
 		    let del = confirm("선택된 상품을 장바구니에서 삭제할까요?");	
 		    if(del){
-				//$(".list").append(`<input type="hidden" name ="_method" value="delete"`);	
-				//$(".list").append(`<input type="hidden" name ="checkBoxArr" value="\${checkBoxArr}">`);	
-				//$(".list").attr("method" , "DELETE").attr("action" , "/api/v1/purchase/cart").submit();
-				
 				
 				$.ajax({
 					url:"/api/v1/purchase/cart",
@@ -468,7 +464,6 @@
 					},
 					dataType : "json",
 					success : function(data){
-						console.log(data);
 						window.location.href='/api/v1/purchase/cart/1';
 					}
 

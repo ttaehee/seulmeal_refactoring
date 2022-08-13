@@ -383,7 +383,7 @@
 				return;
 			}
 			$.ajax({
-				url: "/api/v1/purchase/point/"+password+"/"+usepoint,
+				url: "/api/v1/purchase/point/"+password+"/"+usepoint + "/"+ `${user.userId}`,
 				method : "GET",
 				headers : {
 					"Accept" : "application/json",
@@ -471,6 +471,7 @@
 				url:"/api/v1/purchase/purchase",
 				method:"POST",
 				data:JSON.stringify({
+					userId : `${user.userId}`,
 					name : name,
 					address : address,
 					phone : phone,
