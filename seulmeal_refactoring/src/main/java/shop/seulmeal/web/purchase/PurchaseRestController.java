@@ -23,8 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -69,9 +70,10 @@ public class PurchaseRestController {
 			value = "자동완성", 
 			notes = "<h3> 추가할 재료 검색 시, 검색어가 포함된 재료목록 출력</h3>"
 			+ "- insertCustomProduct.jsp, listPurchaseCart.jsp 에서 사용")
+	@ApiImplicitParam(name="paramMap", value="검색어", example="{\"value\":\"양\"}")
 	@PostMapping("autocomplete")
 	public ResponseEntity<Map<String, Object>> autocomplete(
-			@RequestBody @ApiParam(value="검색어 <br> {\"value\":\"양\"}", required=true, defaultValue="{\"value\":\"양\"}") Map<String, Object> paramMap) throws Exception{
+			@RequestBody Map<String, Object> paramMap) throws Exception{
 		
 		List<Map> resultList = purchaseService.autocomplete(paramMap);
 		paramMap.put("resultList", resultList);
@@ -84,12 +86,15 @@ public class PurchaseRestController {
 			value = "장바구니에서 수량변경", 
 			notes = "<h3> 장바구니에 담긴 상품의 수량을 변경 <br> 수량변경에 성공하면 1 리턴</h3>"
 			+ "- listPurchaseCart.jsp 에서 사용")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="customProductNo", value="커스터마이징상품 고유키", example="650", defaultValue="650"),
+			@ApiImplicitParam(name="count", value="변경수량", example="3", defaultValue="3")
+	})
 	@PutMapping("cart/{customProductNo}/{count}")
 	public ResponseEntity<Integer> updateCusotmProduct(
-			@PathVariable @ApiParam(value="커스터마이징상품 고유키", required=true, defaultValue="650") int customProductNo, 
-			@PathVariable @ApiParam(value="변경수량", required=true, defaultValue="3") int count) throws Exception {
-		
-		CustomProduct customProduct = new CustomProduct();
+			@PathVariable int customProductNo, 
+			@PathVariable int count,
+			@ApiIgnore CustomProduct customProduct) throws Exception {
 	
 		customProduct=purchaseService.getCustomProduct(customProductNo);
 		customProduct.setCount(count);
@@ -104,10 +109,11 @@ public class PurchaseRestController {
 			value = "장바구니목록에서 낱개삭제", 
 			notes = "<h3> 장바구니에 담긴 상품 낱개삭제 <br> 삭제에 성공하면 1 리턴</h3>"
 			+ "- listPurchaseCart.jsp 에서 사용")
+	@ApiImplicitParam(name="customProductNo", value="커스터마이징상품 고유키", example="650", defaultValue="650")
 	@DeleteMapping("cart/{customProductNo}")
 	@Transactional(rollbackFor= {Exception.class})
 	public ResponseEntity<Integer> deleteCustomProduct(
-			@PathVariable @ApiParam(value="커스터마이징상품 고유키", required=true, defaultValue="650") int customProductNo) {
+			@PathVariable int customProductNo) throws Exception {
 
 		int result = purchaseService.deleteCustomProduct(customProductNo);
 		
@@ -119,10 +125,11 @@ public class PurchaseRestController {
 			value = "장바구니목록에서 다중삭제", 
 			notes = "<h3> 장바구니에 담긴 상품 다중 선택삭제 <br> 삭제에 성공하면 1 리턴</h3>"
 			+ "- listPurchaseCart.jsp 에서 사용")
+	@ApiImplicitParam(name="checkBoxArr", value="체크된 상품들 고유키", example="[[866],[867],[868]]")
 	@DeleteMapping("cart")
 	@Transactional(rollbackFor= {Exception.class})
 	public ResponseEntity<Integer> deleteCustomProduct(
-			@RequestBody @ApiParam(value="체크된 상품들 고유키<br>[[866],[867],[868]]", required=true, defaultValue="[[866],[867],[868]]") String checkBoxArr) {
+			@RequestBody String checkBoxArr) throws Exception {
 		
 		String[] check = (checkBoxArr.substring(1,checkBoxArr.length()-1)).split(",");
 		
@@ -139,13 +146,13 @@ public class PurchaseRestController {
 			value = "상품옵션 수정화면 데이터", 
 			notes = "<h3> 장바구니에 담긴 상품의 옵션을 수정하는 화면에 담을 데이터</h3>"
 			+ "- listPurchaseCart.jsp 에서 사용")
+	@ApiImplicitParam(name="customProductNo", value="커스터마이징상품 고유키", example="650", defaultValue="650")
 	@GetMapping("customcart/{customProductNo}")
 	@Transactional(rollbackFor= {Exception.class})
 	public Map<String, Object> getCustomProduct(
-			@PathVariable @ApiParam(value="커스터마이징상품 고유키", required=true, defaultValue="650") int customProductNo
-			) throws Exception {
+			@PathVariable int customProductNo, 
+			@ApiIgnore CustomProduct customProduct) throws Exception {
 
-		CustomProduct customProduct = new CustomProduct();
 		customProduct=purchaseService.getCustomProduct(customProductNo);
 		
 		List<Parts> partsList=productService.getProductParts(customProduct.getProduct().getProductNo());
@@ -162,11 +169,16 @@ public class PurchaseRestController {
 			value = "비밀번호 체크", 
 			notes = "<h3>포인트사용 시 비밀번호(로그인시 사용하는)확인</h3>"
 			+ "- insertPurchase.jsp 에서 사용")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name="password", value="비밀번호", example="1234"),
+		@ApiImplicitParam(name="usePoint", value="사용할 포인트", example="100", defaultValue="100"),
+		@ApiImplicitParam(name="userId", value="사용자 아이디", example="gghm4905")
+	})
 	@GetMapping("point/{password}/{usePoint}/{userId}")
 	public JSONObject confirmPassword(
-			@PathVariable @ApiParam(value="비밀번호", required=true, defaultValue="1234") String password, 
-			@PathVariable @ApiParam(value="사용할 포인트", required=true, defaultValue="100") int usePoint, 
-			@PathVariable @ApiParam(value="사용자 아이디", required=true, defaultValue="gghm4905") String userId) throws Exception {
+			@PathVariable String password, 
+			@PathVariable int usePoint, 
+			@PathVariable String userId) throws Exception {
 		
 		User user=userService.getUser(userId);
 		String realPw=user.getPassword();
@@ -188,13 +200,23 @@ public class PurchaseRestController {
 	//아임포트 결제 전 DB에 insertPurchase
 	@ApiOperation(
 			value = "구매 등록", 
-			notes = "<h3>결제 전 구매테이블에 등록, 추후 이 정보와 결제 후 정보 비교</h3>"
+			notes = "<h3>결제 전 구매테이블에 등록, 추후 이 정보와 결제 후 정보 비교<br>성공 시 1 리턴</h3>"
 			+ "- insertPurchase.jsp 에서 사용")
+	@ApiImplicitParam(name="map", value="구매정보", 
+			example="{\"userId\" : \"gghm4905\",\n"
+					+ "\"name\" : \"김태희\",\n"
+					+ "\"address\" : \"06035/서울 강남구 가로수길 5/1234\",\n"
+					+ "\"phone\" : \"01011112345\",\n"
+					+ "\"email\" : \"ggg@g.com\"\",\n"
+					+ "\"message\" : \"빠른배송\",\n"
+					+ "\"price\" : \"200\",\n"
+					+ "\"paymentCondition\" : \"0\",\n"
+					+ "\"usePoint\" : \"40000\",\n"
+					+ "\"customProductNo\" : [\"865\",\"866\"]}")
 	@PostMapping("purchase")
-	public Purchase insertPurchase(
+	public ResponseEntity<Purchase> insertPurchase(
 			@RequestBody Map<String, Object> map) throws Exception {
 		
-		System.out.println((String)map.get("userId"));
 		User user=userService.getUser((String)map.get("userId"));
 		Purchase purchase = new Purchase();
 		
@@ -227,7 +249,7 @@ public class PurchaseRestController {
 		purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
 		purchase.setUser(user);
 
-		return purchase;		
+		return new ResponseEntity<Purchase>(purchase, HttpStatus.CREATED);		
 	}	
 	
 	//아임포트 검증
@@ -235,10 +257,10 @@ public class PurchaseRestController {
 			value = "아임포트 서버정보와 비교", 
 			notes = "<h3>구매 후 아임포트 서버에 접근해 결제금액 일치하는지 비교</h3>"
 			+ "- insertPurchase.jsp 에서 사용")
+	@ApiImplicitParam(name="purchase", value="방금 결제한 구매정보")
 	@PostMapping("iamport")
 	public JSONObject verifyIamport(
-			@RequestBody Purchase purchase
-			) throws Exception {
+			@RequestBody Purchase purchase, @ApiIgnore Point point) throws Exception {
 		
 		//결제완료 시 구매상태 상품준비중으로 변경
 		int success = purchaseService.updatePurchase(purchase);
@@ -250,7 +272,6 @@ public class PurchaseRestController {
 		String token=purchaseService.getImportToken();
 		
 		JSONObject json=new JSONObject();
-		Point point = new Point();
 		if(success ==1) {
 			String portAmount=purchaseService.getAmount(token, Integer.toString(purchase.getPurchaseNo()));
 			
@@ -299,13 +320,11 @@ public class PurchaseRestController {
 	public List<Purchase> getListPurchase(
 			@PathVariable int currentPage, 
 			@PathVariable(required = false) String searchCondition, 
-			HttpSession session)
-			throws Exception {
+			Search search, HttpSession session) throws Exception {
 		
 		User user=(User)session.getAttribute("user");
 		String userId=user.getUserId();
 		
-		Search search = new Search();
 		search.setCurrentPage(currentPage);
 		search.setPageSize(pageSize);
 		search.setSearchCondition(searchCondition);
@@ -320,14 +339,15 @@ public class PurchaseRestController {
 	}
 	
 	//배송하기, 구매확정 후 구매처리상태변경
-	@ApiOperation(
+    @ApiOperation(
 			value = "구매처리상태변경", 
-			notes = "<h3>purchaseStatus - 결제 전 : 0, 구매완료 : 1, 배송중 : 2, 배송완료 : 3, 구매확정 : 4</h3>"
+			notes = "<h3>구매확정하면 구매처리상태가 변경되며 구매금액과 회원등급에 따른 포인트가 적립<br>적립포인트 리턴<br>"
+			+"purchaseStatus - 결제 전 : 0, 구매완료 : 1, 배송중 : 2, 배송완료 : 3, 구매확정 : 4</h3>"
 			+ "- listPurchase.jsp, listPurchaseSale.jsp 에서 사용")
-   @PutMapping("purchase")
-   public int updatePurchaseCode(  //purchaseNo : purchaseNo,purchaseStatus: "4"
-		   @RequestBody @ApiParam(value="구매 정보", required=true, defaultValue="{\"purchaseNo\":\\{\"4\"}}") Purchase purchase
-		   ) throws Exception{
+    @ApiImplicitParam(name="purchase", value="구매처리상태를 변경할 구매정보")
+    @PutMapping("purchase")
+    public int updatePurchaseCode( 
+		   @RequestBody Purchase purchase, @ApiIgnore Point point) throws Exception{
 
          purchaseService.updatePurchaseCode(purchase);
          purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
@@ -350,8 +370,7 @@ public class PurchaseRestController {
             }else if(grade.equals("3")) {
                plusPoint=(int) (total*0.05);
             }
-            
-           Point point = new Point();
+           
            point.setUserId(user.getUserId());
            point.setPurchaseNo(purchase.getPurchaseNo());
            point.setPointStatus("1");
@@ -369,10 +388,11 @@ public class PurchaseRestController {
 			value = "구매내역 삭제 ", 
 			notes = "<h3>구매내역 목록에서 삭제 <br> 삭제에 성공하면 1 리턴</h3>"
 			+ "- listPurchase.jsp 에서 사용")
+	@ApiImplicitParam(name="purchaseNo", value="구매내역 고유키", example="1", defaultValue="1")
 	@DeleteMapping("purchase/{purchaseNo}")
 	@Transactional(rollbackFor= {Exception.class})
 	public int deletePurchase(
-			@PathVariable @ApiParam(value="구매내역 고유키", required=true, defaultValue="1") int purchaseNo) {
+			@PathVariable int purchaseNo) throws Exception{
 		
 		int success = purchaseService.deletePurchase(purchaseNo);
 		
