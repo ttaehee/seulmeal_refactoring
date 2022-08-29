@@ -57,21 +57,18 @@ public class PurchaseServiceImpl implements PurchaseService{
 	private PurchaseMapper purchaseMapper;
 	
 	public PurchaseServiceImpl() {
-		// TODO Auto-generated constructor stub
 		System.out.println(this.getClass());
 	}
 	
 	//오토컴플릿
 	@Override
 	public List<Map> autocomplete(Map<String, Object> paramMap) throws Exception {
-		// TODO Auto-generated method stub
 		return purchaseMapper.autocomplete(paramMap);
 	}	
 	
 	//커스터마이징재료 
 	@Override
 	public int insertMinusParts(int customProductNo, String minusNo, String minusName) {
-		// TODO Auto-generated method stub
 		
 		String[] minusNoAA = minusNo.split(",");
 		String[] minusNameAA = minusName.split(",");
@@ -94,7 +91,6 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	@Override
 	public int insertPlusParts(int customProductNo, String plusPartsNo, String plusPrice, String plusGram) {
-		// TODO Auto-generated method stub
 		
 		String[] plusPartsNoA = plusPartsNo.split(",");
 		String[] plusPriceA = plusPrice.split(",");
@@ -104,7 +100,6 @@ public class PurchaseServiceImpl implements PurchaseService{
 		for(int i=0; i<plusPartsNoA.length; i++) {		
 			CustomParts plus = new CustomParts();
 			Parts p = new Parts();
-			System.out.println(Integer.parseInt(plusPartsNoA[i]));
 			p.setPartsNo(Integer.parseInt(plusPartsNoA[i]));
 			p.setPrice(Integer.parseInt(plusPriceA[i]));
 			
@@ -114,7 +109,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 			plusParts.add(plus);
 		}
 		
-		Map<String, Object> map=new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("customProductNo", customProductNo);
 		map.put("plusParts",plusParts);
 		
@@ -123,20 +118,17 @@ public class PurchaseServiceImpl implements PurchaseService{
 
 	@Override 
 	public CustomParts getCustomParts(int customPartsNo) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.getCustomParts(customPartsNo);
 	}
 
 	@Override
 	public List<CustomParts> getListCustomParts(int customProductNo) {
-		// TODO Auto-generated method stub
 		
 		return purchaseMapper.getListCustomParts(customProductNo);
 	}
 
 	@Override
 	public int deleteCustomParts(int customProductNo) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.deleteCustomParts(customProductNo);
 	}
 	
@@ -144,19 +136,16 @@ public class PurchaseServiceImpl implements PurchaseService{
 	//커스터마이징상품 
 	@Override
 	public int insertCustomProduct(CustomProduct customProduct) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.insertCustomProduct(customProduct);
 	}
 
 	@Override
 	public CustomProduct getCustomProduct(int customProductNo) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.getCustomProduct(customProductNo);
 	}
 
 	@Override
 	public Map<String, Object> getListCustomProduct(Search search, String userId) {
-		// TODO Auto-generated method stub
 		
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("search", search);
@@ -170,44 +159,37 @@ public class PurchaseServiceImpl implements PurchaseService{
 
 	@Override
 	public int updateCustomProductPurchaseNo(CustomProduct customProduct) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.updateCustomProductPurchaseNo(customProduct);
 	}
 	
 	@Override
 	public int updateCustomProductStatus(CustomProduct customProduct) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.updateCustomProductStatus(customProduct);
 	}
 	
 	@Override
 	public int updateCustomProductCount(CustomProduct customProduct) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.updateCustomProductCount(customProduct);
 	}
 
 	@Override
 	public int deleteCustomProduct(int customProductNo) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.deleteCustomProduct(customProductNo);
 	}
 	
 	//구매 
 	@Override
 	public int insertPurchase(Purchase purchase) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.insertPurchase(purchase);
 	}
 
 	@Override
 	public Purchase getPurchase(int purchaseNo) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.getPurchase(purchaseNo);
 	}
 
 	@Override
 	public Map<String, Object> getListPurchase(Search search, String userId) {
-		// TODO Auto-generated method stub
 		
 		Map<String, Object> map=new HashMap<>();
 		map.put("search", search);
@@ -224,24 +206,22 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	@Override
 	public int updatePurchase(Purchase purchase) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.updatePurchase(purchase);
 	}
 
 	@Override
 	public int updatePurchaseCode(Purchase purchase) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.updatePurchaseCode(purchase);
 	}
 
 	@Override
 	public int deletePurchase(int purchaseNo) {
-		// TODO Auto-generated method stub
 		return purchaseMapper.deletePurchase(purchaseNo);
 	}
 	@Override
 	//아임포트 인증(토큰)받아주는 함수
 	public String getImportToken() {
+		
 		String result = "";
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(IMPORT_TOKEN_URL);
@@ -267,6 +247,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	@Override
 	// Map을 사용해서 Http요청 파라미터를 만들어 주는 함수
 	public List<NameValuePair> convertParameter(Map<String,String> paramMap){
+		
 		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
 		
 		Set<Entry<String,String>> entries = paramMap.entrySet();
@@ -280,6 +261,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	@Override
 	// 결제취소
 	public int cancelPayment(String token, String mid) {
+		
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(IMPORT_CANCEL_URL);
 		Map<String, String> map = new HashMap<String, String>();
@@ -308,6 +290,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	@Override
 	// 아임포트 결제정보에서 amount 조회
 	public String getAmount(String token, String mId) {
+		
 		String amount = "";
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet get = new HttpGet(IMPORT_PAYMENTINFO_URL + mId + "/paid");
@@ -331,7 +314,6 @@ public class PurchaseServiceImpl implements PurchaseService{
 	//판매내역리스트 
 	@Override
 	public Map<String, Object> getListSale(Search search) {
-		// TODO Auto-generated method stub
 		
 		Map<String, Object> map=new HashMap<>();
 		

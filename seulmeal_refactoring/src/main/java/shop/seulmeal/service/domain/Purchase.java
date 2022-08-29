@@ -5,13 +5,13 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-@ToString
 @Getter
 @Setter
+@Builder
 @ApiModel
 public class Purchase {
 	@ApiModelProperty(example="682")
@@ -35,4 +35,5 @@ public class Purchase {
 	private int usePoint;
 	
 	private List<CustomProduct> customProduct;
+
 }

@@ -429,13 +429,13 @@
 	function iamport(){
 		
 		//배송지 입력여부 체크
-		var postcode = $('#sample3_postcode').val();
+		let postcode = $('#sample3_postcode').val();
 		if(postcode == "undefined" || postcode == "" || postcode == null ){
 			toastr.error("배송지는 필수입력사항입니다.","",{timeOut:2000});
 			return;
 		}
 			
-		var form1 = $(".cc").serialize();
+		let form1 = $(".cc").serialize();
 		
 		let customNo = [];
 		let ar = $(".customProductNo").get();
@@ -467,6 +467,7 @@
 			$(".cc").append(`<input type="hidden" id ="paymentCondition" value="0">`);
 			const paymentCondition = $('#paymentCondition').val();
 
+			$.ajaxSettings.traditional = true;
 			$.ajax({
 				url:"/api/v1/purchase/purchase",
 				method:"POST",
