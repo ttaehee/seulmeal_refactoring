@@ -40,6 +40,7 @@
 		<result property="regDate" 				column="reg_date" 			jdbcType="DATE"/>
 		<result property="purchaseNo" 			column="purchase_no" 		jdbcType="NUMERIC"/>
 		<result property="price" 				column="price" 				jdbcType="NUMERIC"/>
+		<result property="cartStatus" 			column="cart_status" 		jdbcType="CHAR"/>
 		<association property="user" javaType="user" >
 			<result property="userId" 	 		column="user_id" 			jdbcType="VARCHAR"/>
 		</association>
@@ -77,6 +78,7 @@
 			<result property="userId" 			column="user_id" 			jdbcType="VARCHAR"/>
 			<result property="userName" 		column="user_name" 			jdbcType="VARCHAR"/>
 			<result property="phone" 			column="phone" 				jdbcType="VARCHAR"/>
+			<result property="grade" 			column="grade" 				jdbcType="VARCHAR"/>
 			<result property="role" 			column="role" 				jdbcType="VARCHAR"/>
 		</association>
 		<collection property="customProduct" column="purchase_no" javaType="java.util.ArrayList" 
@@ -167,7 +169,7 @@
 	
 	<!--커스터마이징옵션 수정페이지에서 출력 -->
 	<select id="getCustomProduct" resultMap="customProductSelectMap" parameterType="int">
-		SELECT c.customproduct_no, c.count, c.price, p.product_no, p.name, p.price product_price, p.thumbnail
+		SELECT c.customproduct_no, c.count, c.price, c.cart_status, p.product_no, p.name, p.price product_price, p.thumbnail
 		FROM customproduct c, product p
 		<where>
 			c.product_no=p.product_no AND customproduct_no = #{customProductNo}
@@ -195,24 +197,26 @@
 	</select>
 	
 	<!-- 구매후 구매번호추가 / 커스터마이징재료 수정은 delete 후 다시 insert -->
-	<update id="updateCustomProductPurchaseNo">
+	<update id="updateCustomProductPurchaseNo" parameterType="map">
 		UPDATE customproduct
 		<set>
 			purchase_no=#{purchaseNo:NUMERIC}
 		</set>
-		<where>
-			customproduct_no = #{customProductNo}
-		</where>
+		WHERE customproduct_no IN 
+		<foreach collection="customProductNo" item="item" index="index" separator="," open="(" close=")">
+		 #{item}
+		</foreach>
 	</update>
 	
-	<update id="updateCustomProductStatus">
+	<update id="updateCustomProductStatus" parameterType="map">
 		UPDATE customproduct
 		<set>
 			cart_status = '0'
 		</set>
-		<where>
-			customproduct_no = #{customProductNo}
-		</where>
+		WHERE customproduct_no IN 
+		<foreach collection="cproductList" item="item" index="index" separator="," open="(" close=")">
+		 #{item}
+		</foreach>
 	</update>
 	
 	<!--장바구니에서 커스터마이징상품 수량 변경 / 옵션 취소하고 다시 선택-->
@@ -237,7 +241,6 @@
 		</where>
 	</update>
 	
-
 	<!-- purchase -->
 	<insert id="insertPurchase">
 		INSERT INTO purchase
@@ -252,9 +255,10 @@
 	</insert>
 	
 	<select id="getPurchase" resultMap="purchaseSelectMap">
-		SELECT * FROM purchase
+		SELECT p.*, u.user_name, u.grade, u.role
+		FROM purchase p, users u
 		<where>
-			purchase_no = #{purchaseNo}
+			purchase_no = #{purchaseNo} AND p.user_id = u.user_Id
 		</where>
 	</select>
 	

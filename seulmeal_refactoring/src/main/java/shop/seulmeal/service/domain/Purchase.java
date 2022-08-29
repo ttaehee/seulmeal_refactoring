@@ -7,11 +7,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @ApiModel
 public class Purchase {
 	@ApiModelProperty(example="682")
@@ -35,5 +36,21 @@ public class Purchase {
 	private int usePoint;
 	
 	private List<CustomProduct> customProduct;
+	
+	@Builder
+	public Purchase(User user, String name, String address, 
+			String phone, String email, String message, int price, 
+			String paymentCondition, int usePoint) {
+		this.user = user;
+		this.name = name;
+		this.address = address;
+		this.phone = phone;
+		this.email = email;
+		this.message = message;
+		this.price = price;
+		this.paymentCondition = paymentCondition;
+		this.usePoint = usePoint;
+		
+	}
 
 }

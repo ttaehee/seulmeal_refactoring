@@ -1,5 +1,6 @@
 package shop.seulmeal.web.purchase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import shop.seulmeal.common.Page;
 import shop.seulmeal.common.Search;
@@ -180,27 +182,24 @@ public class PurchaseController {
 	
 	//포인트만으로 결제시
 	@PostMapping("point")
-	public String insertPurchase(Purchase purchase, Integer[] customProductNo, @AuthenticationPrincipal User user, Point point, Model model) throws Exception {
-
-		purchase.setUser(user);
-	      
+	public String insertPurchase(
+			Purchase purchase, Integer[] customProductNo, HttpSession session, User user, 
+			Point point, Model model) throws Exception {
+		
+		user = (User)session.getAttribute("user");
+		purchase.setUser(user);  
 		purchaseService.insertPurchase(purchase);
 		
 		purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
-		purchase.setUser(user);
 		
 		//구매완료로 구매상태변경
-		purchaseService.updatePurchase(purchase);
+		purchaseService.updatePurchase(purchase);		
 		
-		//customProduct 에 구매번호추가, 장바구니리스트에서 삭제
-		CustomProduct cp=new CustomProduct();
-		//String[] customProductNo = customProductNoList.split(",");
-		for(int i=0; i<customProductNo.length; i++) {
-			cp=purchaseService.getCustomProduct(customProductNo[i]);
-			cp.setPurchaseNo(purchase.getPurchaseNo());
-			purchaseService.updateCustomProductPurchaseNo(cp);
-			purchaseService.updateCustomProductStatus(cp);
-		}
+		//customProduct 에 구매번호추가
+		List<Integer> cpdNoList = new ArrayList<Integer>(Arrays.asList(customProductNo));
+		purchaseService.updateCustomProductPurchaseNo(purchase.getPurchaseNo(), cpdNoList);
+		//장바구니리스트에서 삭제
+		purchaseService.updateCustomProductStatus(purchase.getCustomProduct());
 		
 		//사용포인트
 		point.setUserId(user.getUserId());
@@ -224,8 +223,6 @@ public class PurchaseController {
 	public String getPurchase(@PathVariable int purchaseNo, Purchase purchase, Model model) throws Exception {
 		
 		purchase=purchaseService.getPurchase(purchaseNo);
-		User user=userService.getUser(purchase.getUser().getUserId());
-		purchase.setUser(user);
 		
 		model.addAttribute(purchase);
 		

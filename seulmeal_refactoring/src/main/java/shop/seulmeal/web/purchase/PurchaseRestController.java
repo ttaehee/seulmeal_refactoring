@@ -1,6 +1,5 @@
 package shop.seulmeal.web.purchase;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -184,24 +183,15 @@ public class PurchaseRestController {
 			@RequestBody PurchaseDto purchaseDto, @ApiIgnore Purchase purchase) throws Exception {
 
 		purchase = purchaseDto.toDomain();
-		User user=userService.getUser(purchaseDto.getUserId());
-		purchase.setUser(user);
 
 		// insert
 		purchaseService.insertPurchase(purchase);
-
+		
 		// 커스터마이징상품에 구매번호추가 but 결제중 취소할 수 있으니 구매상태는 구매완료가 아닌 0
-		List<Integer> list = purchaseDto.getCustomProductNo();
-		for (int i = 0; i < list.size(); i++) {
-			CustomProduct cp = new CustomProduct();
-			cp = purchaseService.getCustomProduct(list.get(i));
-			cp.setPurchaseNo(purchase.getPurchaseNo());
-			purchaseService.updateCustomProductPurchaseNo(cp);
-		}	 
+		purchaseService.updateCustomProductPurchaseNo(purchase.getPurchaseNo(), purchaseDto.getCustomProductNo());
 
 		// 구매 insert 하자마자 구매정보 get
 		purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
-		purchase.setUser(user);
 
 		return new ResponseEntity<Purchase>(purchase, HttpStatus.CREATED);
 	}
@@ -218,7 +208,6 @@ public class PurchaseRestController {
 
 		purchase = purchaseService.getPurchase(purchase.getPurchaseNo());
 		User user = userService.getUser(purchase.getUser().getUserId());
-		purchase.setUser(user);
 
 		String token = purchaseService.getImportToken();
 
@@ -229,10 +218,7 @@ public class PurchaseRestController {
 			if (purchase.getPrice() == Integer.parseInt(portAmount)) {
 
 				// 커스터마이징상품은 장바구니리스트에서 삭제
-				List<CustomProduct> cpList = purchase.getCustomProduct();
-				for (CustomProduct cp : cpList) {
-					purchaseService.updateCustomProductStatus(cp);
-				}
+				purchaseService.updateCustomProductStatus(purchase.getCustomProduct());
 
 				if (purchase.getUsePoint() != 0) {
 					// 사용포인트
@@ -299,7 +285,6 @@ public class PurchaseRestController {
 		purchaseService.updatePurchaseCode(purchase);
 		purchase = purchaseService.getPurchase(purchase.getPurchaseNo());
 		User user = userService.getUser(purchase.getUser().getUserId());
-		purchase.setUser(user);
 
 		// 구매확정 후 포인트적립
 		int plusPoint = 0;

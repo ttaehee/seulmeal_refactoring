@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import shop.seulmeal.service.domain.Purchase;
+import shop.seulmeal.service.domain.User;
 
 @ToString
 @Getter
@@ -25,7 +26,11 @@ public class PurchaseDto {
 	private List<Integer> customProductNo;
 	
 	public Purchase toDomain() {	
+		User user = new User();
+		user.setUserId(userId);
+		
         return Purchase.builder()
+        		.user(user)
                 .name(name)
                 .address(address)
                 .phone(phone)

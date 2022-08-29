@@ -40,7 +40,6 @@ dependencies {
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	
-	//testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation group: 'org.springframework.security', name: 'spring-security-taglibs', version: '5.5.0'
 	
@@ -67,6 +66,9 @@ dependencies {
 	// swagger2
 	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
+	
+	//assertJ
+	testImplementation("org.assertj:assertj-core:3.23.1")
 	
 }
 

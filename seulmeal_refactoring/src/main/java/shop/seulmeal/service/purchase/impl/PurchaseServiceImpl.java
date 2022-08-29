@@ -158,14 +158,28 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
-	public int updateCustomProductPurchaseNo(CustomProduct customProduct) {
-		return purchaseMapper.updateCustomProductPurchaseNo(customProduct);
+	public int updateCustomProductPurchaseNo(int purchaseNo, List<Integer> customProductNo) {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("purchaseNo", purchaseNo);
+		map.put("customProductNo", customProductNo);
+		
+		return purchaseMapper.updateCustomProductPurchaseNo(map);
 	}
 	
 	@Override
-	public int updateCustomProductStatus(CustomProduct customProduct) {
-		return purchaseMapper.updateCustomProductStatus(customProduct);
+	public int updateCustomProductStatus(List<CustomProduct> customProductList) {
+		
+		List<Integer> list = new ArrayList<>();
+		for(CustomProduct cp : customProductList) {
+			list.add(cp.getCustomProductNo());
+		}
+		
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("cproductList", list);
+		return purchaseMapper.updateCustomProductStatus(map);
 	}
+	
 	
 	@Override
 	public int updateCustomProductCount(CustomProduct customProduct) {

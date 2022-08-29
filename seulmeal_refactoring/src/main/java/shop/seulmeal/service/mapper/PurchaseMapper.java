@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
 import shop.seulmeal.common.Search;
 
 import shop.seulmeal.service.domain.CustomParts;
-import shop.seulmeal.service.domain.CustomParts;
 import shop.seulmeal.service.domain.CustomProduct;
 import shop.seulmeal.service.domain.Purchase;
 
@@ -21,7 +20,6 @@ public interface PurchaseMapper {
 	//커스터마이징재료 추가 
 	public int insertMinusParts(Map<String, Object> map);
 	public int insertPlusParts(Map<String, Object> map);
-	//public int insertCustomParts(Map<String, Object> map);
 	
 	//커스터마이징상재료 상세 
 	public CustomParts getCustomParts(int CustomPartsNo);
@@ -43,8 +41,10 @@ public interface PurchaseMapper {
 	public List<CustomProduct> getListCustomProduct(Map<String, Object> map);
 	
 	//커스터마이징상품 수정(구매번호추가), 커스터마이징재료 수정은 delete 후 다시 insert
-	public int updateCustomProductPurchaseNo(CustomProduct customProduct);
-	public int updateCustomProductStatus(CustomProduct customProduct);
+	public int updateCustomProductPurchaseNo(Map<String, Object> map);
+	
+	//구매 후 장바구니에서 안보이게
+	public int updateCustomProductStatus(Map<String, Object> map);
 	
 	//장바구니에서 커스터마이징상품 수량변경
 	public int updateCustomProductCount(CustomProduct customProduct);

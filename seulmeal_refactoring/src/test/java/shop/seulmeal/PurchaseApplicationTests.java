@@ -1,5 +1,6 @@
 package shop.seulmeal;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -7,14 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import shop.seulmeal.common.Page;
 import shop.seulmeal.common.Search;
 import shop.seulmeal.service.domain.CustomParts;
 import shop.seulmeal.service.domain.CustomProduct;
@@ -24,16 +21,9 @@ import shop.seulmeal.service.domain.Purchase;
 import shop.seulmeal.service.domain.User;
 import shop.seulmeal.service.mapper.ProductMapper;
 import shop.seulmeal.service.mapper.PurchaseMapper;
-import shop.seulmeal.service.mapper.UserMapper;
-import shop.seulmeal.service.product.ProductService;
-
 
 @SpringBootTest
-//@Transactional(rollbackFor=Exception.class)
 class PurchaseApplicationTests {
-	
-	//@Autowired
-	//private UserMapper userMapper;
 	
 	@Autowired
 	private PurchaseMapper purchaseMapper;
@@ -128,7 +118,7 @@ class PurchaseApplicationTests {
 	}	
 	
 	
-	@Test
+	//@Test
 	void insertCustomProduct() throws Exception {
 		CustomProduct customProduct=new CustomProduct();
 		User user=new User();
@@ -220,33 +210,37 @@ class PurchaseApplicationTests {
 
 	}		
 	
-	//@Test
+	@Test
 	void updateCustomProduct() {
-		CustomProduct customProduct=new CustomProduct();
 		
-		customProduct.setCustomProductNo(5);
-		customProduct.setPurchaseNo(3);
+		List<Integer> cpdNoList = new ArrayList<>();	
+		cpdNoList.add(921);
+		cpdNoList.add(922);
 		
-		purchaseMapper.updateCustomProductPurchaseNo(customProduct);
-
-		System.out.println("결과 : "+purchaseMapper.getCustomProduct(5));
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("purchaseNo", 100);
+		map.put("customProductNo", cpdNoList);
 		
-		assertEquals(purchaseMapper.getCustomProduct(5).getPurchaseNo(), 3);
+		purchaseMapper.updateCustomProductPurchaseNo(map);
+		
+		CustomProduct customProduct1 = purchaseMapper.getCustomProduct(921);
+		CustomProduct customProduct2 = purchaseMapper.getCustomProduct(922);
+		
+		assertThat(customProduct1.getPurchaseNo()).isEqualTo(100);
+		assertThat(customProduct2.getPurchaseNo()).isEqualTo(100);
 	}
 	
-	//@Test
+	@Test
 	void deleteCustomProduct() {
-		CustomProduct customProduct=new CustomProduct();
-		customProduct.setCustomProductNo(3);
-		
-		purchaseMapper.updateCustomProductStatus(customProduct);
 
-		System.out.println("결과 : "+purchaseMapper.getCustomProduct(3));
+		purchaseMapper.deleteCustomProduct(927);
 		
-		assertEquals(purchaseMapper.getCustomProduct(3).getCartStatus(), 1);
+		CustomProduct customProduct = purchaseMapper.getCustomProduct(927);
+		
+		assertThat(customProduct.getCartStatus()).isEqualTo("0");
 	}	
 	
-	//@Test
+	@Test
 	void insertPurchase() {
 		Purchase purchase=new Purchase();
 		User user=new User();
@@ -257,16 +251,21 @@ class PurchaseApplicationTests {
 		purchase.setPrice(10000);
 		purchase.setAddress("강남");
 		purchase.setName("홍길동");
-		purchase.setPhone("1111");
 		purchase.setMessage("빠른배송요");
 		purchase.setPurchaseStatus("0");
 		purchase.setPaymentCondition("0");
-		purchase.setImp_uid("1111");
-		purchase.setAmount(13000);
 		
-		int result=purchaseMapper.insertPurchase(purchase);
-		System.out.println("결과 : "+result);
-		assertEquals(purchase.getPrice(), 10000);
+		purchaseMapper.insertPurchase(purchase);
+		
+		Purchase purchase2 = purchaseMapper.getPurchase(purchase.getPurchaseNo());
+		
+		assertThat(purchase2.getPhone()).isEqualTo("4905");
+		assertThat(purchase2.getPrice()).isEqualTo(10000);
+		assertThat(purchase2.getAddress()).isEqualTo("강남");
+		assertThat(purchase2.getName()).isEqualTo("홍길동");
+		assertThat(purchase2.getMessage()).isEqualTo("빠른배송요");
+		assertThat(purchase2.getPurchaseStatus()).isEqualTo("0");
+		assertThat(purchase2.getPaymentCondition()).isEqualTo("0");
 	}
 	
 	//@Test
@@ -293,21 +292,12 @@ class PurchaseApplicationTests {
 		map.put("search", search);
 		
 		List<Purchase> list=purchaseMapper.getListPurchase(map);
-		
-		
-		System.out.println("==================================");
-		System.out.println("list:"+list);
-		System.out.println("==================================");
-		
-		//for(Purchase purchase : list) {
-		//	System.out.println("구매리스트 : "+purchase);
-		//}
 
 	}			
 	
 	//@Test
 	void updatePurchaseCode() {
-		Purchase purchase=new Purchase();
+		Purchase purchase = new Purchase();
 		
 		purchase.setPurchaseNo(2);
 		purchase.setPurchaseStatus("1");

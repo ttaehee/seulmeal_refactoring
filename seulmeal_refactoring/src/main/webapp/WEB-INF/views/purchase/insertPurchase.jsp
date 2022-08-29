@@ -144,9 +144,7 @@
 							  <td align="left">
 							  <span id="customprice" name="customPrice">${customProduct.price*customProduct.count}</span>원</td>
 							  <c:set var="sum" value="${customProduct.price*customProduct.count}" />
-						  </tr>  
-
-				  
+						  </tr>   
 				</c:when>
 			
 				<c:when test="${cartStatus eq '1'}">
@@ -459,6 +457,9 @@
 			$(".cc").append(`<input type="hidden" name ="usePoint" value="\${usePoint}">`);
 			$(".cc").append(`<input type="hidden" name ="paymentCondition" value="1">`);
 			$(".cc").append(`<input type="hidden" name ="address" value="\${address}">`);
+			
+			console.log("usePoint:"+usePoint)
+			console.log("address:"+address)
 					
 			$("form").attr("method" , "POST").attr("action" , "/api/v1/purchase/point").submit();
 			
