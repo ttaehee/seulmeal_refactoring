@@ -18,7 +18,7 @@ public interface PurchaseService {
 	
 	//커스터마이징재료 추가 
 	public int insertMinusParts(int customProductNo, CustomProductDto dto);
-	public int insertPlusParts(int customProductNo, String plusPartsNo, String plusPrice, String plusGram);
+	public int insertPlusParts(int customProductNo, CustomProductDto dto);
 	
 	//커스터마이징상재료 상세 
 	public CustomParts getCustomParts(int CustomPartsNo);

@@ -88,27 +88,23 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 	
 	@Override
-	public int insertPlusParts(int customProductNo, String plusPartsNo, String plusPrice, String plusGram) {
+	public int insertPlusParts(int customProductNo, CustomProductDto dto) {
 		
-		String[] plusPartsNoA = plusPartsNo.split(",");
-		String[] plusPriceA = plusPrice.split(",");
-		String[] plusGramA = plusGram.split(",");
+		List<CustomParts> plusParts = new ArrayList<>();
 		
-		List<CustomParts> plusParts = new ArrayList();
-		for(int i=0; i<plusPartsNoA.length; i++) {		
-			CustomParts plus = new CustomParts();
+		for(int i=0; i<dto.getPlusPartsNo().size(); i++) {
 			Parts p = new Parts();
-			p.setPartsNo(Integer.parseInt(plusPartsNoA[i]));
-			p.setPrice(Integer.parseInt(plusPriceA[i]));
+			p.setPartsNo(dto.getPlusPartsNo().get(i));
+			p.setPrice(dto.getPlusPrice().get(i));
 			
+			CustomParts plus = new CustomParts();
 			plus.setParts(p);
-			plus.setGram(Integer.parseInt(plusGramA[i]));
+			plus.setGram(dto.getPlusGram().get(i));
 			plus.setCustomProductNo(customProductNo);
 			plusParts.add(plus);
 		}
 		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("customProductNo", customProductNo);
+		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("plusParts",plusParts);
 		
 		return purchaseMapper.insertPlusParts(map);
