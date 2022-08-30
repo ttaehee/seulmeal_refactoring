@@ -129,8 +129,10 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//커스터마이징상품 
 	@Override
-	public int insertCustomProduct(CustomProduct customProduct) {
-		return purchaseMapper.insertCustomProduct(customProduct);
+	public CustomProduct insertCustomProduct(CustomProduct customProduct) {
+		purchaseMapper.insertCustomProduct(customProduct);
+		customProduct = purchaseMapper.getCustomProduct(customProduct.getCustomProductNo());
+		return customProduct;
 	}
 
 	@Override

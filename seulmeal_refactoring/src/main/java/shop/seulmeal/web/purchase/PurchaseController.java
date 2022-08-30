@@ -1,7 +1,6 @@
 package shop.seulmeal.web.purchase;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import shop.seulmeal.common.Page;
 import shop.seulmeal.common.Search;
-import shop.seulmeal.service.domain.CustomParts;
 import shop.seulmeal.service.domain.CustomProduct;
 import shop.seulmeal.service.domain.Parts;
 import shop.seulmeal.service.domain.Point;
@@ -74,7 +72,7 @@ public class PurchaseController {
 		customProduct.setProduct(productService.getProduct(productNo));
 		customProduct.setUser((User) session.getAttribute("user"));
 
-		purchaseService.insertCustomProduct(customProduct);
+		customProduct = purchaseService.insertCustomProduct(customProduct);
 		
 		// minus parts
 		if (dto.getMinusNo().size() > 0) {

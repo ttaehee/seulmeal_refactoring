@@ -31,7 +31,7 @@ public interface PurchaseService {
 	
 	
 	//커스터마이징상품 추가 
-	public int insertCustomProduct(CustomProduct customProduct);
+	public CustomProduct insertCustomProduct(CustomProduct customProduct);
 	
 	//커스터마이징상품 상세 
 	public CustomProduct getCustomProduct(int customProductNo);
