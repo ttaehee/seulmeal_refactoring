@@ -14,6 +14,7 @@ import shop.seulmeal.service.domain.User;
 public class PurchaseDto {
 	
 	private String userId;
+	private String password;
 	private String name;
 	private String address;
 	private String phone;

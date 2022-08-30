@@ -355,6 +355,8 @@
 	//포인트사용 비밀번호체크 후 결제금액차감
 	function fnCalTotal(){
 		usepoint = parseInt($('#usepoint').val());
+		let total = sum-usepoint;
+		let password = $('#password').val();
 		
 		if($('#confirm').text()==="적용취소"){
 			let con = confirm("포인트적용을 취소할까요?");
@@ -367,9 +369,6 @@
         		$('#confirm').text('확인');
 			}
 		}
-
-		let total = sum-usepoint;
-		const password = $('#password').val();
 		
 		if(usepoint == 0 || usepoint == "" || usepoint =="undefined" || usepoint == null || isNaN(usepoint)){
 			toastr.error("사용할 포인트를 먼저 입력하세요.","",{timeOut:2000});
@@ -380,9 +379,16 @@
 				$('#password').val('');
 				return;
 			}
+			password = $('#password').val();
+			console.log(password)
+			
 			$.ajax({
-				url: "/api/v1/purchase/point/"+password+"/"+usepoint + "/"+ `${user.userId}`,
-				method : "GET",
+				url: "/api/v1/purchase/point/"+usepoint,
+				method:"POST",
+				data:JSON.stringify({
+					userId : `${user.userId}`,
+					password : password
+				}),
 				headers : {
 					"Accept" : "application/json",
 					"Content-Type" : "application/json"
@@ -398,13 +404,13 @@
 		        		document.getElementById('usepoint').readOnly = true;
 		        		document.getElementById('password').readOnly = true;
 		        		
-		        	}else if(data.success==='pw'){
+		        	}else if(data.success==='password fail'){
 		        		toastr.error("비밀번호를 다시 입력하세요.","",{timeOut:2000});
 		        		$('#password').val('');
 		        		return;
 		        		
 		        	}else{
-		        		toastr.error("다시 시도해주세요.","",{timeOut:2000});
+		        		toastr.error("보유 포인트를 확인해주세요.","",{timeOut:2000});
 		        		$('#usepoint').val('');
 		        		$('#password').val('');
 		        		return;

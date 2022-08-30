@@ -1,11 +1,11 @@
 package shop.seulmeal.web.purchase;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -137,35 +137,34 @@ public class PurchaseRestController {
 
 		List<Parts> partsList = productService.getProductParts(customProduct.getProduct().getProductNo());
 
-		Map<String, Object> map = new HashedMap();
+		Map<String, Object> map = new HashMap<>();
 		map.put("customProduct", customProduct);
 		map.put("partsList", partsList);
 
 		return map;
 	}
 
-	// 포인트사용 시 비밀번호확인
+	// 포인트사용 시 비밀번호확인(BCrypt 암호화때문에 컨트롤러에서 처리)
 	@ApiOperation(value = "비밀번호 체크", notes = "<h3>포인트사용 시 비밀번호(로그인시 사용하는)확인</h3>" + "- insertPurchase.jsp 에서 사용")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "password", value = "비밀번호", example = "1234"),
-			@ApiImplicitParam(name = "usePoint", value = "사용할 포인트", example = "100", defaultValue = "100"),
-			@ApiImplicitParam(name = "userId", value = "사용자 아이디", example = "gghm4905") })
-	@GetMapping("point/{password}/{usePoint}/{userId}")
-	public JSONObject confirmPassword(@PathVariable String password, @PathVariable int usePoint,
-			@PathVariable String userId) throws Exception {
-
-		User user = userService.getUser(userId);
-		String realPw = user.getPassword();
-		int realPt = user.getTotalPoint();
+	@ApiImplicitParams({ @ApiImplicitParam(name = "purchaseDto", value = "아이디와 비밀번호"),
+			@ApiImplicitParam(name = "usePoint", value = "사용할 포인트", example = "100", defaultValue = "100")})
+	@PostMapping("point/{usePoint}")
+	public JSONObject confirmPassword(@PathVariable int usePoint,
+			@RequestBody PurchaseDto purchaseDto) throws Exception {
+		
+		User sessionUser = userService.getUser(purchaseDto.getUserId());
+		String realPw = sessionUser.getPassword();
+		int realPt = sessionUser.getTotalPoint();
 
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 		JSONObject json = new JSONObject();
-		if (encoder.matches(password, realPw) && usePoint <= realPt) {
+		if (encoder.matches(purchaseDto.getPassword(), realPw) && usePoint <= realPt) {
 			json.put("success", "true");
 		} else if (usePoint > realPt) {
-			json.put("success", "pt");
+			json.put("success", "point fail");
 		} else {
-			json.put("success", "pw");
+			json.put("success", "password fail");
 		}
 		return json;
 	}
@@ -173,11 +172,7 @@ public class PurchaseRestController {
 	// 아임포트 결제 전 DB에 insertPurchase
 	@ApiOperation(value = "구매 등록", notes = "<h3>결제 전 구매테이블에 등록, 추후 이 정보와 결제 후 정보 비교<br>성공 시 1 리턴</h3>"
 			+ "- insertPurchase.jsp 에서 사용")
-	@ApiImplicitParam(name = "map", value = "구매정보", example = "{\"userId\" : \"gghm4905\",\n" + "\"name\" : \"김태희\",\n"
-			+ "\"address\" : \"06035/서울 강남구 가로수길 5/1234\",\n" + "\"phone\" : \"01011112345\",\n"
-			+ "\"email\" : \"ggg@g.com\"\",\n" + "\"message\" : \"빠른배송\",\n" + "\"price\" : \"200\",\n"
-			+ "\"paymentCondition\" : \"0\",\n" + "\"usePoint\" : \"40000\",\n"
-			+ "\"customProductNo\" : [\"865\",\"866\"]}")
+	@ApiImplicitParam(name = "purchaseDto", value = "구매정보")
 	@PostMapping("purchase")
 	public ResponseEntity<Purchase> insertPurchase(
 			@RequestBody PurchaseDto purchaseDto, @ApiIgnore Purchase purchase) throws Exception {
