@@ -48,6 +48,7 @@ public interface PurchaseService {
 	
 	//커스터마이징상품 삭제(장바구니사용여부 수정)
 	public int deleteCustomProduct(int customProductNo);
+	public int deleteCustomProducts(List<Integer> customProductList);
 
 	
 	//구매추가

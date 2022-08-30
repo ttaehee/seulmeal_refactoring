@@ -454,10 +454,13 @@
 		    let del = confirm("선택된 상품을 장바구니에서 삭제할까요?");	
 		    if(del){
 				
+		    	$.ajaxSettings.traditional = true;
 				$.ajax({
 					url:"/api/v1/purchase/cart",
 					method:"DELETE",
-					data : JSON.stringify(checkBoxArr),
+					data : JSON.stringify({
+						customProductNo : checkBoxArr
+					}),
 					headers : {
 						"Accept" : "application/json",
 						"Content-Type" : "application/json"

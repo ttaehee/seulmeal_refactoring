@@ -61,8 +61,7 @@ public class PurchaseRestController {
 	private int pageSize;
 
 	// 오토컴플릿
-	@ApiOperation(value = "자동완성", notes = "<h3> 추가할 재료 검색 시, 검색어가 포함된 재료목록 출력</h3>"
-			+ "- insertCustomProduct.jsp, listPurchaseCart.jsp 에서 사용")
+	@ApiOperation(value = "자동완성", notes = "<h3> 추가할 재료 검색 시, 검색어가 포함된 재료목록 출력</h3>")
 	@ApiImplicitParam(name = "paramMap", value = "검색어", example = "{\"value\":\"양\"}")
 	@PostMapping("autocomplete")
 	public ResponseEntity<Map<String, Object>> autocomplete(@RequestBody Map<String, Object> paramMap)
@@ -75,8 +74,7 @@ public class PurchaseRestController {
 	}
 
 	// 장바구니에서 수량변경
-	@ApiOperation(value = "장바구니에서 수량변경", notes = "<h3> 장바구니에 담긴 상품의 수량을 변경 <br> 수량변경에 성공하면 1 리턴</h3>"
-			+ "- listPurchaseCart.jsp 에서 사용")
+	@ApiOperation(value = "장바구니에서 수량변경", notes = "<h3> 장바구니에 담긴 상품의 수량을 변경 <br> 수량변경에 성공하면 1 리턴</h3>")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "customProductNo", value = "커스터마이징상품 고유키", example = "650", defaultValue = "650"),
 			@ApiImplicitParam(name = "count", value = "변경수량", example = "3", defaultValue = "3") })
@@ -89,12 +87,11 @@ public class PurchaseRestController {
 
 		int result = purchaseService.updateCustomProductCount(customProduct);
 
-		return new ResponseEntity<>(result, HttpStatus.CREATED);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// 커스터마이징 상품 장바구니에서 낱개삭제
-	@ApiOperation(value = "장바구니목록에서 낱개삭제", notes = "<h3> 장바구니에 담긴 상품 낱개삭제 <br> 삭제에 성공하면 1 리턴</h3>"
-			+ "- listPurchaseCart.jsp 에서 사용")
+	@ApiOperation(value = "장바구니목록에서 낱개삭제", notes = "<h3> 장바구니에 담긴 상품 낱개삭제 <br> 삭제에 성공하면 1 리턴</h3>")
 	@ApiImplicitParam(name = "customProductNo", value = "커스터마이징상품 고유키", example = "650", defaultValue = "650")
 	@DeleteMapping("cart/{customProductNo}")
 	@Transactional(rollbackFor = { Exception.class })
@@ -102,31 +99,23 @@ public class PurchaseRestController {
 
 		int result = purchaseService.deleteCustomProduct(customProductNo);
 
-		return new ResponseEntity<>(result, HttpStatus.CREATED);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// 커스터마이징 상품 장바구니에서 선택다중삭제
-	@ApiOperation(value = "장바구니목록에서 다중삭제", notes = "<h3> 장바구니에 담긴 상품 다중 선택삭제 <br> 삭제에 성공하면 1 리턴</h3>"
-			+ "- listPurchaseCart.jsp 에서 사용")
-	@ApiImplicitParam(name = "checkBoxArr", value = "체크된 상품들 고유키", example = "[[866],[867],[868]]")
+	@ApiOperation(value = "장바구니목록에서 다중삭제", notes = "<h3> 장바구니에 담긴 상품 다중 선택삭제 <br> 삭제에 성공하면 1 리턴</h3>")
+	@ApiImplicitParam(name = "checkBoxArr", value = "체크된 상품들 고유키")
 	@DeleteMapping("cart")
 	@Transactional(rollbackFor = { Exception.class })
-	public ResponseEntity<Integer> deleteCustomProduct(@RequestBody String checkBoxArr) throws Exception {
+	public ResponseEntity<Integer> deleteCustomProduct(@RequestBody PurchaseDto purchaseDto) throws Exception {
 
-		String[] check = (checkBoxArr.substring(1, checkBoxArr.length() - 1)).split(",");
+		int result = purchaseService.deleteCustomProducts(purchaseDto.getCustomProductNo());
 
-		int result = 0;
-		for (String customProductNo : check) {
-			result = purchaseService
-					.deleteCustomProduct(Integer.parseInt(customProductNo.substring(1, customProductNo.length() - 1)));
-		}
-
-		return new ResponseEntity<>(result, HttpStatus.CREATED);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	// 커스터마이징 상품 옵션수정화면 출력
-	@ApiOperation(value = "상품옵션 수정화면 데이터", notes = "<h3> 장바구니에 담긴 상품의 옵션을 수정하는 화면에 담을 데이터</h3>"
-			+ "- listPurchaseCart.jsp 에서 사용")
+	@ApiOperation(value = "상품옵션 수정화면 데이터", notes = "<h3> 장바구니에 담긴 상품의 옵션을 수정하는 화면에 담을 데이터</h3>")
 	@ApiImplicitParam(name = "customProductNo", value = "커스터마이징상품 고유키", example = "650", defaultValue = "650")
 	@GetMapping("customcart/{customProductNo}")
 	@Transactional(rollbackFor = { Exception.class })
@@ -170,8 +159,7 @@ public class PurchaseRestController {
 	}
 
 	// 아임포트 결제 전 DB에 insertPurchase
-	@ApiOperation(value = "구매 등록", notes = "<h3>결제 전 구매테이블에 등록, 추후 이 정보와 결제 후 정보 비교<br>성공 시 1 리턴</h3>"
-			+ "- insertPurchase.jsp 에서 사용")
+	@ApiOperation(value = "구매 등록", notes = "<h3>결제 전 구매테이블에 등록, 추후 이 정보와 결제 후 정보 비교<br>성공 시 1 리턴</h3>")
 	@ApiImplicitParam(name = "purchaseDto", value = "구매정보")
 	@PostMapping("purchase")
 	public ResponseEntity<Purchase> insertPurchase(
@@ -185,15 +173,14 @@ public class PurchaseRestController {
 		// 커스터마이징상품에 구매번호추가 but 결제중 취소할 수 있으니 구매상태는 구매완료가 아닌 0
 		purchaseService.updateCustomProductPurchaseNo(purchase.getPurchaseNo(), purchaseDto.getCustomProductNo());
 
-		// 구매 insert 하자마자 구매정보 get
+		// 구매 insert 하자마자 구매정보 get (아임포트에 보내줘야함)
 		purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
 
 		return new ResponseEntity<Purchase>(purchase, HttpStatus.CREATED);
 	}
 
 	// 아임포트 검증
-	@ApiOperation(value = "아임포트 서버정보와 비교", notes = "<h3>구매 후 아임포트 서버에 접근해 결제금액 일치하는지 비교</h3>"
-			+ "- insertPurchase.jsp 에서 사용")
+	@ApiOperation(value = "아임포트 서버정보와 비교", notes = "<h3>구매 후 아임포트 서버에 접근해 결제금액 일치하는지 비교</h3>")
 	@ApiImplicitParam(name = "purchase", value = "방금 결제한 구매정보")
 	@PostMapping("iamport")
 	public JSONObject verifyIamport(@RequestBody Purchase purchase, @ApiIgnore Point point) throws Exception {
@@ -271,8 +258,7 @@ public class PurchaseRestController {
 
 	// 배송하기, 구매확정 후 구매처리상태변경
 	@ApiOperation(value = "구매처리상태변경", notes = "<h3>구매확정하면 구매처리상태가 변경되며 구매금액과 회원등급에 따른 포인트가 적립<br>적립포인트 리턴<br>"
-			+ "purchaseStatus - 결제 전 : 0, 구매완료 : 1, 배송중 : 2, 배송완료 : 3, 구매확정 : 4</h3>"
-			+ "- listPurchase.jsp, listPurchaseSale.jsp 에서 사용")
+			+ "purchaseStatus - 결제 전 : 0, 구매완료 : 1, 배송중 : 2, 배송완료 : 3, 구매확정 : 4</h3>")
 	@ApiImplicitParam(name = "purchase", value = "구매처리상태를 변경할 구매정보")
 	@PutMapping("purchase")
 	public int updatePurchaseCode(@RequestBody Purchase purchase, @ApiIgnore Point point) throws Exception {
@@ -311,7 +297,7 @@ public class PurchaseRestController {
 	}
 
 	// 구매내역 삭제
-	@ApiOperation(value = "구매내역 삭제 ", notes = "<h3>구매내역 목록에서 삭제 <br> 삭제에 성공하면 1 리턴</h3>" + "- listPurchase.jsp 에서 사용")
+	@ApiOperation(value = "구매내역 삭제 ", notes = "<h3>구매내역 목록에서 삭제 <br> 삭제에 성공하면 1 리턴</h3>")
 	@ApiImplicitParam(name = "purchaseNo", value = "구매내역 고유키", example = "1", defaultValue = "1")
 	@DeleteMapping("purchase/{purchaseNo}")
 	@Transactional(rollbackFor = { Exception.class })

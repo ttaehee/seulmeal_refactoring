@@ -191,6 +191,14 @@ public class PurchaseServiceImpl implements PurchaseService{
 		return purchaseMapper.deleteCustomProduct(customProductNo);
 	}
 	
+	@Override
+	public int deleteCustomProducts(List<Integer> customProductList) {
+		
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("cproductList", customProductList);
+		return purchaseMapper.updateCustomProductStatus(map);
+	}
+	
 	//구매 
 	@Override
 	public int insertPurchase(Purchase purchase) {
