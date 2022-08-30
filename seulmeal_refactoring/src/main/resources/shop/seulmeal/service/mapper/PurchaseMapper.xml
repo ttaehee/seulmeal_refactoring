@@ -263,11 +263,11 @@
 	</select>
 	
 	<select id="getListPurchase" resultMap="purchaseSelectMap" parameterType="map">
-		SELECT purchase_no, user_id, price, address, name, phone, email, message, purchase_status, reg_date, payment_condition, amount
+		SELECT vt.*
 		FROM (SELECT inner_table.*, ROWNUM AS row_seq
-			FROM (SELECT *
-				FROM purchase
-				WHERE user_id=#{userId} AND status='0' AND purchase_status!='0'
+			FROM (SELECT p.*, u.role
+				FROM purchase p, users u
+				WHERE p.user_id=#{userId} AND p.status='0' AND p.purchase_status!='0' AND p.user_Id=u.user_Id
 				<if test="search.searchCondition != null">
 					<if test="search.searchCondition == 0">
 						AND to_date(reg_date, 'yy/mm/dd') =to_date(SYSDATE, 'yy/mm/dd')
@@ -284,8 +284,8 @@
 						AND to_date(reg_date, 'yy/mm/dd') &gt;=to_date(add_months(SYSDATE,-3),'yy/mm/dd')
 					</if>
 				</if>
-				ORDER BY purchase_no desc) inner_table
-			WHERE ROWNUM &lt; = #{search.endRowNum})
+				ORDER BY p.purchase_no desc) inner_table
+			WHERE ROWNUM &lt; = #{search.endRowNum})vt
 		WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum}
 	</select>
 	

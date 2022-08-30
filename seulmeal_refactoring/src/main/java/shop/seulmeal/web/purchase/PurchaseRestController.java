@@ -95,7 +95,8 @@ public class PurchaseRestController {
 	@ApiImplicitParam(name = "customProductNo", value = "커스터마이징상품 고유키", example = "650", defaultValue = "650")
 	@DeleteMapping("cart/{customProductNo}")
 	@Transactional(rollbackFor = { Exception.class })
-	public ResponseEntity<Integer> deleteCustomProduct(@PathVariable int customProductNo) throws Exception {
+	public ResponseEntity<Integer> deleteCustomProduct(
+			@PathVariable int customProductNo) throws Exception {
 
 		int result = purchaseService.deleteCustomProduct(customProductNo);
 
@@ -107,7 +108,8 @@ public class PurchaseRestController {
 	@ApiImplicitParam(name = "checkBoxArr", value = "체크된 상품들 고유키")
 	@DeleteMapping("cart")
 	@Transactional(rollbackFor = { Exception.class })
-	public ResponseEntity<Integer> deleteCustomProduct(@RequestBody PurchaseDto purchaseDto) throws Exception {
+	public ResponseEntity<Integer> deleteCustomProduct(
+			@RequestBody PurchaseDto purchaseDto) throws Exception {
 
 		int result = purchaseService.deleteCustomProducts(purchaseDto.getCustomProductNo());
 
@@ -119,10 +121,10 @@ public class PurchaseRestController {
 	@ApiImplicitParam(name = "customProductNo", value = "커스터마이징상품 고유키", example = "650", defaultValue = "650")
 	@GetMapping("customcart/{customProductNo}")
 	@Transactional(rollbackFor = { Exception.class })
-	public Map<String, Object> getCustomProduct(@PathVariable int customProductNo,
-			@ApiIgnore CustomProduct customProduct) throws Exception {
+	public Map<String, Object> getCustomProduct(
+			@PathVariable int customProductNo) throws Exception {
 
-		customProduct = purchaseService.getCustomProduct(customProductNo);
+		CustomProduct customProduct = purchaseService.getCustomProduct(customProductNo);
 
 		List<Parts> partsList = productService.getProductParts(customProduct.getProduct().getProductNo());
 
@@ -135,11 +137,12 @@ public class PurchaseRestController {
 
 	// 포인트사용 시 비밀번호확인(BCrypt 암호화때문에 컨트롤러에서 처리)
 	@ApiOperation(value = "비밀번호 체크", notes = "<h3>포인트사용 시 비밀번호(로그인시 사용하는)확인</h3>" + "- insertPurchase.jsp 에서 사용")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "purchaseDto", value = "아이디와 비밀번호"),
+	@ApiImplicitParams({ 
+			@ApiImplicitParam(name = "purchaseDto", value = "아이디와 비밀번호"),
 			@ApiImplicitParam(name = "usePoint", value = "사용할 포인트", example = "100", defaultValue = "100")})
 	@PostMapping("point/{usePoint}")
-	public JSONObject confirmPassword(@PathVariable int usePoint,
-			@RequestBody PurchaseDto purchaseDto) throws Exception {
+	public JSONObject confirmPassword(
+			@PathVariable int usePoint, @RequestBody PurchaseDto purchaseDto) throws Exception {
 		
 		User sessionUser = userService.getUser(purchaseDto.getUserId());
 		String realPw = sessionUser.getPassword();
@@ -237,10 +240,9 @@ public class PurchaseRestController {
 	@ApiIgnore
 	@RequestMapping(value = { "/purchases", "/purchases/{currentPage}", "/purchases/{currentPage}/{searchCondition}" })
 	public List<Purchase> getListPurchase(@PathVariable int currentPage,
-			@PathVariable(required = false) String searchCondition, Search search, HttpSession session)
-			throws Exception {
+			@PathVariable(required = false) String searchCondition, Search search, HttpSession session) throws Exception {
 
-		User user = (User) session.getAttribute("user");
+		User user = (User)session.getAttribute("user");
 		String userId = user.getUserId();
 
 		search.setCurrentPage(currentPage);
@@ -250,9 +252,6 @@ public class PurchaseRestController {
 		Map<String, Object> map = purchaseService.getListPurchase(search, userId);
 		List<Purchase> purchaseList = (List<Purchase>) map.get("purchaseList");
 
-		for (Purchase p : purchaseList) {
-			p.setUser(user);
-		}
 		return purchaseList;
 	}
 
