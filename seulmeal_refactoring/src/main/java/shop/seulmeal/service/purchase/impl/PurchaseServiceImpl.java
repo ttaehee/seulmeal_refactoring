@@ -201,8 +201,10 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//구매 
 	@Override
-	public int insertPurchase(Purchase purchase) {
-		return purchaseMapper.insertPurchase(purchase);
+	public Purchase insertPurchase(Purchase purchase) {
+		purchaseMapper.insertPurchase(purchase);
+		purchase = purchaseMapper.getPurchase(purchase.getPurchaseNo());
+		return purchase;
 	}
 
 	@Override

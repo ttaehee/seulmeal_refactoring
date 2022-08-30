@@ -136,7 +136,7 @@ public class PurchaseRestController {
 	}
 
 	// 포인트사용 시 비밀번호확인(BCrypt 암호화때문에 컨트롤러에서 처리)
-	@ApiOperation(value = "비밀번호 체크", notes = "<h3>포인트사용 시 비밀번호(로그인시 사용하는)확인</h3>" + "- insertPurchase.jsp 에서 사용")
+	@ApiOperation(value = "비밀번호 체크", notes = "<h3>포인트사용 시 비밀번호(로그인시 사용하는)확인</h3>")
 	@ApiImplicitParams({ 
 			@ApiImplicitParam(name = "purchaseDto", value = "아이디와 비밀번호"),
 			@ApiImplicitParam(name = "usePoint", value = "사용할 포인트", example = "100", defaultValue = "100")})
@@ -170,14 +170,11 @@ public class PurchaseRestController {
 
 		purchase = purchaseDto.toDomain();
 
-		// insert
-		purchaseService.insertPurchase(purchase);
+		// insert + 구매 insert 하자마자 구매정보 get (아임포트에 보내줘야함)
+		purchase = purchaseService.insertPurchase(purchase);
 		
 		// 커스터마이징상품에 구매번호추가 but 결제중 취소할 수 있으니 구매상태는 구매완료가 아닌 0
 		purchaseService.updateCustomProductPurchaseNo(purchase.getPurchaseNo(), purchaseDto.getCustomProductNo());
-
-		// 구매 insert 하자마자 구매정보 get (아임포트에 보내줘야함)
-		purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
 
 		return new ResponseEntity<Purchase>(purchase, HttpStatus.CREATED);
 	}

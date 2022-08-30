@@ -187,9 +187,7 @@ public class PurchaseController {
 		
 		user = (User)session.getAttribute("user");
 		purchase.setUser(user);  
-		purchaseService.insertPurchase(purchase);
-		
-		purchase=purchaseService.getPurchase(purchase.getPurchaseNo());
+		purchase = purchaseService.insertPurchase(purchase);
 		
 		//구매완료로 구매상태변경
 		purchaseService.updatePurchase(purchase);		
@@ -198,7 +196,7 @@ public class PurchaseController {
 		List<Integer> cpdNoList = new ArrayList<Integer>(Arrays.asList(customProductNo));
 		purchaseService.updateCustomProductPurchaseNo(purchase.getPurchaseNo(), cpdNoList);
 		//장바구니리스트에서 삭제
-		purchaseService.updateCustomProductStatus(purchase.getCustomProduct());
+		purchaseService.deleteCustomProducts(cpdNoList);
 		
 		//사용포인트
 		point.setUserId(user.getUserId());

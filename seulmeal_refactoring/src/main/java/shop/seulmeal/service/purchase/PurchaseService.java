@@ -52,7 +52,7 @@ public interface PurchaseService {
 
 	
 	//구매추가
-	public int insertPurchase(Purchase purchase);
+	public Purchase insertPurchase(Purchase purchase);
 	
 	//구매상세 
 	public Purchase getPurchase(int purchaseNo);
