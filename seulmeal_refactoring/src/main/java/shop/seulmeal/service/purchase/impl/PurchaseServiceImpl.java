@@ -30,6 +30,7 @@ import shop.seulmeal.service.domain.Parts;
 import shop.seulmeal.service.domain.Purchase;
 import shop.seulmeal.service.mapper.PurchaseMapper;
 import shop.seulmeal.service.purchase.PurchaseService;
+import shop.seulmeal.web.purchase.dto.CustomProductDto;
 
 @Service("purchaseServiceImpl")
 public class PurchaseServiceImpl implements PurchaseService{
@@ -68,22 +69,19 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//커스터마이징재료 
 	@Override
-	public int insertMinusParts(int customProductNo, String minusNo, String minusName) {
+	public int insertMinusParts(int customProductNo, CustomProductDto dto) {
 		
-		String[] minusNoAA = minusNo.split(",");
-		String[] minusNameAA = minusName.split(",");
+		List<CustomParts> minusParts = new ArrayList<>();
 		
-		List<CustomParts> minusParts = new ArrayList();
-		for(int i=0; i<minusNoAA.length; i++) {
+		for(int i=0; i<dto.getMinusNo().size(); i++) {
 			CustomParts minus = new CustomParts();
-			minus.setMinusNo(Integer.parseInt(minusNoAA[i]));
-			minus.setMinusName(minusNameAA[i]);
+			minus.setMinusNo(dto.getMinusNo().get(i));
+			minus.setMinusName(dto.getMinusName().get(i));
 			minus.setCustomProductNo(customProductNo);
 			minusParts.add(minus);
 		}
 		
 		Map<String, Object> map=new HashMap<String, Object>();
-		map.put("customProductNo", customProductNo);
 		map.put("minusParts",minusParts);
 		
 		return purchaseMapper.insertMinusParts(map);

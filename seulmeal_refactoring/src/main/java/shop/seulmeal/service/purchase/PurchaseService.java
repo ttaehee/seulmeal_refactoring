@@ -9,6 +9,7 @@ import shop.seulmeal.common.Search;
 import shop.seulmeal.service.domain.CustomParts;
 import shop.seulmeal.service.domain.CustomProduct;
 import shop.seulmeal.service.domain.Purchase;
+import shop.seulmeal.web.purchase.dto.CustomProductDto;
 
 public interface PurchaseService {
 	
@@ -16,7 +17,7 @@ public interface PurchaseService {
 	public List<Map>autocomplete(Map<String, Object> paramMap) throws Exception;
 	
 	//커스터마이징재료 추가 
-	public int insertMinusParts(int customProductNo, String minusNo, String minusName);
+	public int insertMinusParts(int customProductNo, CustomProductDto dto);
 	public int insertPlusParts(int customProductNo, String plusPartsNo, String plusPrice, String plusGram);
 	
 	//커스터마이징상재료 상세 
