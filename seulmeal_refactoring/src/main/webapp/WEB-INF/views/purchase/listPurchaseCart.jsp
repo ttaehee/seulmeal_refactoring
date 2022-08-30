@@ -502,8 +502,8 @@
 		const cartStatus = $(ths).val();
 		
 		$(".cc").append(`<input type="hidden" name ="count" value="\${count}">`);
-		$(".cc").append(`<input type="hidden" name ="minusNoA" value="\${minusNo}">`);
-		$(".cc").append(`<input type="hidden" name ="minusNameA" value="\${minusName}">`);
+		$(".cc").append(`<input type="hidden" name ="minusNo" value="\${minusNo}">`);
+		$(".cc").append(`<input type="hidden" name ="minusName" value="\${minusName}">`);
 		$(".cc").append(`<input type="hidden" name ="price" value="\${customprice}">`);
 		$(".cc").append(`<input type="hidden" name ="cartStatus" value="\${cartStatus}">`);
 		$(".cc").attr("method" , "POST").attr("action" , "/api/v1/purchase/customcart").submit();

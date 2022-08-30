@@ -166,15 +166,15 @@
 		const cartStatus = $(ths).val();
 		
 		$(".cc").append(`<input type="hidden" name ="count" value="\${count}">`);
-		$(".cc").append(`<input type="hidden" name ="minusNoA" value="\${minusNo}">`);
-		$(".cc").append(`<input type="hidden" name ="minusNameA" value="\${minusName}">`);
+		$(".cc").append(`<input type="hidden" name ="minusNo" value="\${minusNo}">`);
+		$(".cc").append(`<input type="hidden" name ="minusName" value="\${minusName}">`);
 		$(".cc").append(`<input type="hidden" name ="price" value="\${customprice}">`);
 		$(".cc").append(`<input type="hidden" name ="cartStatus" value="\${cartStatus}">`);
 		$(".cc").attr("method" , "POST").attr("action" , "/api/v1/purchase/custom").submit();
 
 	 }
 	
-	//상품구성재료 제외안되어있으면 제외하기
+	//상품구성재료 제외하기
 	function fncExecpt(partsNo, partsName, ths){
 		
 		minusNo.push(partsNo);
@@ -184,7 +184,7 @@
         ths.text("제외취소하기");
 	}
 	
-	//상품구성재료 제외하기버튼 클릭
+	//상품구성재료 제외취소
 	$(function() {
 	    $('.execpt').on('click', function() {
 	    	const partsNo = $(this).attr('data-partsNo');	

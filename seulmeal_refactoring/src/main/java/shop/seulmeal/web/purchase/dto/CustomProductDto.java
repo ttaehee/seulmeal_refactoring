@@ -12,6 +12,7 @@ import shop.seulmeal.service.domain.CustomProduct;
 @ToString
 public class CustomProductDto {
 	
+	private int customProductNo;
 	private int count;
 	private int price;
 	private String cartStatus;

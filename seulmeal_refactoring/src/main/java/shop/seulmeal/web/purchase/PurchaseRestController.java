@@ -70,7 +70,7 @@ public class PurchaseRestController {
 		List<Map> resultList = purchaseService.autocomplete(paramMap);
 		paramMap.put("resultList", resultList);
 
-		return new ResponseEntity<>(paramMap, HttpStatus.OK);
+		return new ResponseEntity<>(paramMap, HttpStatus.CREATED);
 	}
 
 	// 장바구니에서 수량변경
