@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,7 +63,6 @@ public class PurchaseController {
 
 	// 커스터마이징 상품 인서트
 	@PostMapping("custom")
-	@Transactional(rollbackFor = Exception.class)
 	public String insertCustomProduct(@RequestParam(value = "productNo") int productNo, CustomProductDto dto,
 			Model model, HttpSession session) throws Exception {
 
@@ -126,7 +124,6 @@ public class PurchaseController {
 
 	// 커스터마이징 상품 옵션수정(커스터마이징재료 삭제 후 추가)
 	@PostMapping("customcart")
-	@Transactional(rollbackFor = { Exception.class })
 	public String updateCustomProduct(CustomProductDto dto,
 			Model model, HttpSession session) {
 		
