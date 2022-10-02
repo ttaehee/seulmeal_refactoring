@@ -72,7 +72,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//커스터마이징재료 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int insertMinusParts(int customProductNo, CustomProductDto dto) {
 		
 		List<CustomParts> minusParts = new ArrayList<>();
@@ -92,7 +92,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int insertPlusParts(int customProductNo, CustomProductDto dto) {
 		
 		List<CustomParts> plusParts = new ArrayList<>();
@@ -129,7 +129,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int deleteCustomParts(int customProductNo) {
 		return purchaseMapper.deleteCustomParts(customProductNo);
 	}
@@ -137,7 +137,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//커스터마이징상품 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public CustomProduct insertCustomProduct(CustomProduct customProduct) {
 		purchaseMapper.insertCustomProduct(customProduct);
 		customProduct = purchaseMapper.getCustomProduct(customProduct.getCustomProductNo());
@@ -165,7 +165,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int updateCustomProductPurchaseNo(int purchaseNo, List<Integer> customProductNo) {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -176,7 +176,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int updateCustomProductStatus(List<CustomProduct> customProductList) {
 		
 		List<Integer> list = new ArrayList<>();
@@ -191,19 +191,19 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int updateCustomProductCount(CustomProduct customProduct) {
 		return purchaseMapper.updateCustomProductCount(customProduct);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int deleteCustomProduct(int customProductNo) {
 		return purchaseMapper.deleteCustomProduct(customProductNo);
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int deleteCustomProducts(List<Integer> customProductList) {
 		
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -213,7 +213,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//구매 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public Purchase insertPurchase(Purchase purchase) {
 		purchaseMapper.insertPurchase(purchase);
 		purchase = purchaseMapper.getPurchase(purchase.getPurchaseNo());
@@ -244,19 +244,19 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int updatePurchase(Purchase purchase) {
 		return purchaseMapper.updatePurchase(purchase);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int updatePurchaseCode(Purchase purchase) {
 		return purchaseMapper.updatePurchaseCode(purchase);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public int deletePurchase(int purchaseNo) {
 		return purchaseMapper.deletePurchase(purchaseNo);
 	}
