@@ -64,7 +64,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//오토컴플릿
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Map> autocomplete(Map<String, Object> paramMap) throws Exception {
 		return purchaseMapper.autocomplete(paramMap);
 	}	
@@ -115,13 +115,13 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override 
-	@Transactional
+	@Transactional(readOnly = true)
 	public CustomParts getCustomParts(int customPartsNo) {
 		return purchaseMapper.getCustomParts(customPartsNo);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CustomParts> getListCustomParts(int customProductNo) {
 		
 		return purchaseMapper.getListCustomParts(customProductNo);
@@ -144,13 +144,13 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public CustomProduct getCustomProduct(int customProductNo) {
 		return purchaseMapper.getCustomProduct(customProductNo);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Map<String, Object> getListCustomProduct(Search search, String userId) {
 		
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -220,13 +220,13 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Purchase getPurchase(int purchaseNo) {
 		return purchaseMapper.getPurchase(purchaseNo);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Map<String, Object> getListPurchase(Search search, String userId) {
 		
 		Map<String, Object> map=new HashMap<>();
@@ -355,7 +355,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//판매내역리스트 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Map<String, Object> getListSale(Search search) {
 		
 		Map<String, Object> map=new HashMap<>();
