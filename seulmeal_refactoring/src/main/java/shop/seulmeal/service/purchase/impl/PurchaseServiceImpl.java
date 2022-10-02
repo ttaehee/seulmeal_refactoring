@@ -19,6 +19,7 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,12 +64,14 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//오토컴플릿
 	@Override
+	@Transactional
 	public List<Map> autocomplete(Map<String, Object> paramMap) throws Exception {
 		return purchaseMapper.autocomplete(paramMap);
 	}	
 	
 	//커스터마이징재료 
 	@Override
+	@Transactional
 	public int insertMinusParts(int customProductNo, CustomProductDto dto) {
 		
 		List<CustomParts> minusParts = new ArrayList<>();
@@ -88,6 +91,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 	
 	@Override
+	@Transactional
 	public int insertPlusParts(int customProductNo, CustomProductDto dto) {
 		
 		List<CustomParts> plusParts = new ArrayList<>();
@@ -111,17 +115,20 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override 
+	@Transactional
 	public CustomParts getCustomParts(int customPartsNo) {
 		return purchaseMapper.getCustomParts(customPartsNo);
 	}
 
 	@Override
+	@Transactional
 	public List<CustomParts> getListCustomParts(int customProductNo) {
 		
 		return purchaseMapper.getListCustomParts(customProductNo);
 	}
 
 	@Override
+	@Transactional
 	public int deleteCustomParts(int customProductNo) {
 		return purchaseMapper.deleteCustomParts(customProductNo);
 	}
@@ -129,6 +136,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//커스터마이징상품 
 	@Override
+	@Transactional
 	public CustomProduct insertCustomProduct(CustomProduct customProduct) {
 		purchaseMapper.insertCustomProduct(customProduct);
 		customProduct = purchaseMapper.getCustomProduct(customProduct.getCustomProductNo());
@@ -136,11 +144,13 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
+	@Transactional
 	public CustomProduct getCustomProduct(int customProductNo) {
 		return purchaseMapper.getCustomProduct(customProductNo);
 	}
 
 	@Override
+	@Transactional
 	public Map<String, Object> getListCustomProduct(Search search, String userId) {
 		
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -154,6 +164,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
+	@Transactional
 	public int updateCustomProductPurchaseNo(int purchaseNo, List<Integer> customProductNo) {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -164,6 +175,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 	
 	@Override
+	@Transactional
 	public int updateCustomProductStatus(List<CustomProduct> customProductList) {
 		
 		List<Integer> list = new ArrayList<>();
@@ -178,16 +190,19 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	
 	@Override
+	@Transactional
 	public int updateCustomProductCount(CustomProduct customProduct) {
 		return purchaseMapper.updateCustomProductCount(customProduct);
 	}
 
 	@Override
+	@Transactional
 	public int deleteCustomProduct(int customProductNo) {
 		return purchaseMapper.deleteCustomProduct(customProductNo);
 	}
 	
 	@Override
+	@Transactional
 	public int deleteCustomProducts(List<Integer> customProductList) {
 		
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -197,6 +212,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//구매 
 	@Override
+	@Transactional
 	public Purchase insertPurchase(Purchase purchase) {
 		purchaseMapper.insertPurchase(purchase);
 		purchase = purchaseMapper.getPurchase(purchase.getPurchaseNo());
@@ -204,11 +220,13 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
+	@Transactional
 	public Purchase getPurchase(int purchaseNo) {
 		return purchaseMapper.getPurchase(purchaseNo);
 	}
 
 	@Override
+	@Transactional
 	public Map<String, Object> getListPurchase(Search search, String userId) {
 		
 		Map<String, Object> map=new HashMap<>();
@@ -225,21 +243,25 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 	
 	@Override
+	@Transactional
 	public int updatePurchase(Purchase purchase) {
 		return purchaseMapper.updatePurchase(purchase);
 	}
 
 	@Override
+	@Transactional
 	public int updatePurchaseCode(Purchase purchase) {
 		return purchaseMapper.updatePurchaseCode(purchase);
 	}
 
 	@Override
+	@Transactional
 	public int deletePurchase(int purchaseNo) {
 		return purchaseMapper.deletePurchase(purchaseNo);
 	}
-	@Override
+	
 	//아임포트 인증(토큰)받아주는 함수
+	@Override
 	public String getImportToken() {
 		
 		String result = "";
@@ -264,8 +286,8 @@ public class PurchaseServiceImpl implements PurchaseService{
 		return result;
 	}
 	
+	//Map을 사용해서 Http요청 파라미터를 만들어 주는 함수
 	@Override
-	// Map을 사용해서 Http요청 파라미터를 만들어 주는 함수
 	public List<NameValuePair> convertParameter(Map<String,String> paramMap){
 		
 		List<NameValuePair> paramList = new ArrayList<NameValuePair>();
@@ -278,8 +300,8 @@ public class PurchaseServiceImpl implements PurchaseService{
 		return paramList;
 	}	
 	
+	//결제취소
 	@Override
-	// 결제취소
 	public int cancelPayment(String token, String mid) {
 		
 		HttpClient client = HttpClientBuilder.create().build();
@@ -307,8 +329,8 @@ public class PurchaseServiceImpl implements PurchaseService{
 		}
 	}
 	
+	//아임포트 결제정보에서 amount 조회
 	@Override
-	// 아임포트 결제정보에서 amount 조회
 	public String getAmount(String token, String mId) {
 		
 		String amount = "";
@@ -333,6 +355,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//판매내역리스트 
 	@Override
+	@Transactional
 	public Map<String, Object> getListSale(Search search) {
 		
 		Map<String, Object> map=new HashMap<>();
