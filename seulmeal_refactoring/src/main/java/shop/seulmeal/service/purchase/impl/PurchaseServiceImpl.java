@@ -19,6 +19,7 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -64,7 +65,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//오토컴플릿
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly = true)
 	public List<Map> autocomplete(Map<String, Object> paramMap) throws Exception {
 		return purchaseMapper.autocomplete(paramMap);
 	}	
@@ -115,13 +116,13 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override 
-	@Transactional(readOnly = true)
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly = true)
 	public CustomParts getCustomParts(int customPartsNo) {
 		return purchaseMapper.getCustomParts(customPartsNo);
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly = true)
 	public List<CustomParts> getListCustomParts(int customProductNo) {
 		
 		return purchaseMapper.getListCustomParts(customProductNo);
@@ -144,13 +145,13 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly = true)
 	public CustomProduct getCustomProduct(int customProductNo) {
 		return purchaseMapper.getCustomProduct(customProductNo);
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly = true)
 	public Map<String, Object> getListCustomProduct(Search search, String userId) {
 		
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -220,13 +221,13 @@ public class PurchaseServiceImpl implements PurchaseService{
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly = true)
 	public Purchase getPurchase(int purchaseNo) {
 		return purchaseMapper.getPurchase(purchaseNo);
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly = true)
 	public Map<String, Object> getListPurchase(Search search, String userId) {
 		
 		Map<String, Object> map=new HashMap<>();
@@ -355,7 +356,7 @@ public class PurchaseServiceImpl implements PurchaseService{
 	
 	//판매내역리스트 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly = true)
 	public Map<String, Object> getListSale(Search search) {
 		
 		Map<String, Object> map=new HashMap<>();
